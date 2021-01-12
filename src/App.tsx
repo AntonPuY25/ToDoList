@@ -3,6 +3,7 @@ import './App.css';
 import {ToDoList} from "./ToDoList/ToDoList";
 import {PropsTypeTask} from './ToDoList/ToDoList';
 import {v1} from "uuid";
+import AddItemForm from "./AddItemForm";
 
 
 export type FilterTypes = "all" | "active" | "completed";
@@ -24,6 +25,9 @@ function App() {
     )
     type TypeTaskState = {
         [key: string]: Array<PropsTypeTask>
+    }
+    type TypeTaskStateTest = {
+        [key: string]: []
     }
     let [tasks, setTasks] = useState<TypeTaskState>({
             [todolistID1]: [
@@ -89,10 +93,47 @@ function App() {
 
     }
 
+    function addToDoList(todolistTitle: string) {
+        const todolistId = v1();
+        const newToDolist: ToDoListsType = {
+            id: todolistId,
+            title: todolistTitle,
+            filter: 'all'
+        }
+// const newTask:TypeTaskState = ({
+//     [todolistId]: []
+// })
+        setTasks({...tasks, [todolistId]: []})
+        setTodolists([...todolists, newToDolist])
+    }
+
+
+    function changeTaskTitle(taskId: string, title: string, toDiListId: string) {
+
+        let todolistTasks = tasks[toDiListId]
+        const task = todolistTasks.find(t => t.id === taskId)
+
+        if (task) {
+            task.title = title
+        }
+        setTasks({...tasks})
+
+
+    }
+
+    function changeTodolistTitle(title: string, toDiListId: string) {
+        let todo = (todolists.find(tl => tl.id === toDiListId))
+        if (todo) {
+            todo.title = title
+        }
+        setTasks({...tasks})
+    }
+
+
     return (
 
         <div className="App">
-
+            <AddItemForm addItems={addToDoList}/>
             {todolists.map((newToDoList: ToDoListsType) => {
 
                 let resultTask = tasks[newToDoList.id];
@@ -107,11 +148,11 @@ function App() {
                                  title={newToDoList.title} tasks={resultTask}
                                  addTask={addTask} delete={deleteTask} changeStatus={changeStatus}
                                  changeFilter={changeFilter} filter={newToDoList.filter}
-                                 removeTodoList={removeTodoList}
+                                 removeTodoList={removeTodoList} changeTaskTitle={changeTaskTitle}
+                                 changeTodolistTitle={changeTodolistTitle}
                 />
             })}
 
-<div>One more Dev</div>
         </div>
     );
 }
