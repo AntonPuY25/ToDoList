@@ -8,9 +8,9 @@ type TypeEditSpan={
 
 function EditSpan(props:TypeEditSpan){
     const [editMode,setEditMode] = useState<boolean>(false)
-    const [text,setText] = useState<string>("")
+    const [text,setText] = useState<string>(props.title)
     const onEditMode = ()=>{setEditMode(true)
-    setText("")
+
     }
     const ofEditMode = ()=>{
         setEditMode(false)
