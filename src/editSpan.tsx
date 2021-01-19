@@ -1,4 +1,5 @@
 import React, {ChangeEvent, useState} from "react";
+import {TextField} from "@material-ui/core";
 type TypeEditSpan={
     title:string
     isDone?:boolean
@@ -21,7 +22,7 @@ function EditSpan(props:TypeEditSpan){
 
     }
     return(
-        editMode?<input value={text} onChange={(event)=>{changeText(event)}} autoFocus onBlur={ofEditMode}/>
+        editMode?<TextField value={text}  size={"small"} onChange={changeText} autoFocus onBlur={ofEditMode}/>
         : <span onDoubleClick={onEditMode} className={(props.isDone) ? 'is-done' : ""}>{props.title}</span>
 
     )

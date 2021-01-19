@@ -2,7 +2,10 @@ import React, {ChangeEvent} from "react";
 import {FilterTypes} from "../App";
 import AddItemForm from "../AddItemForm";
 import EditSpan from "../editSpan";
-
+import {Button, Checkbox, IconButton} from "@material-ui/core";
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+import s from './todolist.module.css'
 type PropsType = {
     title: string
     tasks: Array<PropsTypeTask>
@@ -60,9 +63,10 @@ export function ToDoList(props: PropsType) {
     }
     return (<div>
         <div>
-            <h3><EditSpan title={props.title}
+            <h3 style={{textAlign:'center'}}><EditSpan title={props.title}
                           changeTaskTitle={changeTodotitle}/>
-                <span><button onClick={() => props.removeTodoList(props.id)}>Х</button></span>
+                <div className={s.delete}><IconButton
+                    onClick={() => props.removeTodoList(props.id)}><DeleteForeverIcon/></IconButton></div>
             </h3>
 
             <AddItemForm addItems={addTask}/>
@@ -91,34 +95,34 @@ export function ToDoList(props: PropsType) {
                 const changeStatus = (e: ChangeEvent<HTMLInputElement>) => {
                     props.changeStatus(i.id, e.currentTarget.checked, props.id)
                 }
-                return (<ul key={i.id}>
-                        <li><input
+                return (<div key={i.id}>
+                        <div><Checkbox color={"primary"}
                             onChange={changeStatus}
-                            type="checkbox" checked={i.isDone}/>
-
+                            checked={i.isDone}/>
                             <EditSpan title={i.title} isDone={i.isDone}
                                       changeTaskTitle={changeTaskNew}/>
                             {/*<span className={(i.isDone === true) ? 'is-done' : ""}>{i.title}</span>*/}
-                        </li>
+                            <span><IconButton onClick={removeTask}><HighlightOffIcon/>
+                        </IconButton></span>
+                        </div>
 
-                        <button onClick={removeTask}>X
-                        </button>
 
-                    </ul>
+                    </div>
 
                 )
             })}
 
 
             <div>
-                <button className={(props.filter === 'all' ? 'btn' : "")} onClick={onAllKeyHandler}>All
-                </button>
-                <button className={(props.filter === 'active' ? 'btn' : "")}
+                <Button size={"small"} color={"default"} variant={props.filter === 'all' ? 'outlined' : "text"}
+                        onClick={onAllKeyHandler}>All
+                </Button>
+                <Button color={"primary"} size={"small"} variant={props.filter === 'active' ? 'outlined' : "text"}
                         onClick={onActiveKeyHandler}>Active
-                </button>
-                <button className={(props.filter === 'completed' ? 'btn' : "")}
+                </Button>
+                <Button color={"secondary"} size={"small"} variant={props.filter === 'completed' ? 'outlined' : "text"}
                         onClick={onCompletedKeyHandler}>Completed
-                </button>
+                </Button>
             </div>
         </div>
     </div>)
