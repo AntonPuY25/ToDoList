@@ -20,6 +20,7 @@ type PropsType = {
     changeTodolistTitle: (title: string, toDiListId: string) => void
 
 }
+
 export type PropsTypeTask = {
     id: string
     title: string
@@ -28,6 +29,7 @@ export type PropsTypeTask = {
 }
 
 export function ToDoList(props: PropsType) {
+
     // let [error, setError] = useState<"Title is Required" | null>(null)
     // const [title, setTitle] = useState<string>("")
     // const addTask = () => {
@@ -55,7 +57,7 @@ export function ToDoList(props: PropsType) {
     const onCompletedKeyHandler = () => {
         props.changeFilter('completed', props.id)
     }
-    const addTask = (title: string) => {
+     const addTask = (title: string) => {
         props.addTask(title, props.id)
     }
     const changeTodotitle = (title: string) => {
