@@ -12,7 +12,7 @@ export type FilterTypes = "all" | "active" | "completed";
 export type TypeTaskState = {
     [key: string]: Array<PropsTypeTask>
 }
-type ToDoListsType = {
+export type ToDoListsType = {
     id: string
     title: string
     filter: FilterTypes
@@ -20,6 +20,7 @@ type ToDoListsType = {
 }
 export const todolistID1 = v1();
 export const todolistID2 = v1();
+
 export function App() {
     const [todolists, setTodolists] = useState<Array<ToDoListsType>>([
             {id: todolistID1, title: 'What to Learn', filter: 'all'},
@@ -34,7 +35,7 @@ export function App() {
                 {id: v1(), title: 'Css', isDone: false},
                 {id: v1(), title: 'JS', isDone: true},
                 {id: v1(), title: 'React', isDone: false}
-                ],
+            ],
             [todolistID2]: [
                 {id: v1(), title: 'Milk', isDone: true},
                 {id: v1(), title: 'Bread', isDone: false},
@@ -45,7 +46,7 @@ export function App() {
         }
     )
 
-function addTask(title: string, toDoListId: string) {
+    function addTask(title: string, toDoListId: string) {
 
         const newTask: PropsTypeTask = {
             id: v1(),
@@ -96,9 +97,7 @@ function addTask(title: string, toDoListId: string) {
             title: todolistTitle,
             filter: 'all'
         }
-// const newTask:TypeTaskState = ({
-//     [todolistId]: []
-// })
+
         setTasks({...tasks, [todolistId]: []})
         setTodolists([...todolists, newToDolist])
     }
@@ -146,8 +145,8 @@ function addTask(title: string, toDoListId: string) {
                     if (newToDoList.filter === "completed") {
                         resultTask = tasks[newToDoList.id].filter(t => t.isDone === true)
                     }
-                    return <Grid style={{padding:'10px'}} key={newToDoList.id} item xs={3}>
-                        <Paper elevation={5} style={{padding:'10px'}}>
+                    return <Grid style={{padding: '10px'}} key={newToDoList.id} item xs={3}>
+                        <Paper elevation={5} style={{padding: '10px'}}>
                             <ToDoList id={newToDoList.id}
                                       title={newToDoList.title} tasks={resultTask}
                                       addTask={addTask} delete={deleteTask} changeStatus={changeStatus}
