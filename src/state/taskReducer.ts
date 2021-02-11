@@ -1,4 +1,4 @@
-import {TypeTaskState} from "../App";
+import {TypeTaskState} from "../AppWithRedux";
 import {PropsTypeTask} from "../ToDoList/ToDoList";
 import {TypeAddTodolistAction, TypeRemoveTodolistAction} from "./todolistReducer";
 import {v1} from "uuid";

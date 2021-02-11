@@ -1,5 +1,10 @@
 .delete{
-    position: relative;
+
     bottom:50px;
     text-align: right;
+}
+.test{
+    cursor: pointer;
+    width:100%;
+
 }

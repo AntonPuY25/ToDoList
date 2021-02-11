@@ -6,13 +6,9 @@ import {v1} from "uuid";
 import AddItemForm from "./AddItemForm";
 import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from "@material-ui/core";
 import {Menu} from "@material-ui/icons";
-import {changeTodolistFilterAC, RemoveTodolistAC} from "./state/todolistReducer";
 import {
-    addTaskAC,
     AddTodilistAC,
-    changeTaskStatusAC,
-    changeTaskTitleAC,
-    removeTaskAC,
+
 
 } from "./state/taskReducer";
 import {useDispatch, useSelector} from "react-redux";
@@ -39,41 +35,14 @@ export function AppWithRedux() {
     const tasks = useSelector<AppRootStateType,TypeTaskState>(state =>state.tasks)
     const dispatch = useDispatch()
 
-    function addTask(title: string,toDoListId: string) {
-        dispatch(addTaskAC(title,toDoListId))
 
-    }
-
-    let deleteTask = (id: string, toDoListId: string) => {
-        dispatch(removeTaskAC(id,toDoListId))
-    }
-
-
-    function changeFilter(filterValue: FilterTypes, toDoListID: string) {
-        dispatch(changeTodolistFilterAC(toDoListID,filterValue))
-    }
-
-    function removeTodoList(toDoListID: string) {
-        dispatch(RemoveTodolistAC(toDoListID))
-        dispatch(RemoveTodolistAC(toDoListID))
-    }
-
-    function changeStatus(taskId: string, isDone: boolean, toDiListId: string) {
-        dispatch(changeTaskStatusAC(taskId,isDone,toDiListId))
-    }
 
     function addToDoList(todolistTitle: string) {
-
         dispatch(AddTodilistAC(todolistTitle))
 
     }
 
-    function changeTaskTitle(taskId: string, title: string, toDiListId: string) {
-        dispatch(changeTaskTitleAC(taskId, title, toDiListId))
-    }
-    function changeTodolistTitle(title: string,toDiListId: string) {
-        dispatch(addTaskAC(title,toDiListId))
-    }
+
 
     return (
         <div>
@@ -90,7 +59,9 @@ export function AppWithRedux() {
             </AppBar>
             <Container>
                 <Grid container> <AddItemForm addItems={addToDoList}/></Grid>
-                <Grid container>{todolists.map((newToDoList: ToDoListsType) => {
+                <Grid container>
+
+                    {todolists.map((newToDoList: ToDoListsType) => {
 
                     let resultTask = tasks[newToDoList.id];
 
@@ -103,14 +74,13 @@ export function AppWithRedux() {
                     return <Grid style={{padding: '10px'}} key={newToDoList.id} item xs={3}>
                         <Paper elevation={5} style={{padding: '10px'}}>
                             <ToDoList id={newToDoList.id}
-                                      title={newToDoList.title} tasks={resultTask}
-                                      addTask={addTask} delete={deleteTask} changeStatus={changeStatus}
-                                      changeFilter={changeFilter} filter={newToDoList.filter}
-                                      removeTodoList={removeTodoList} changeTaskTitle={changeTaskTitle}
-                                      changeTodolistTitle={changeTodolistTitle}/>
+                                      title={newToDoList.title}
+                                      tasks={resultTask}
+                                       filter={newToDoList.filter}/>
                         </Paper>
                     </Grid>
-                })}</Grid>
+                })}
+                </Grid>
             </Container>
 
         </div>
