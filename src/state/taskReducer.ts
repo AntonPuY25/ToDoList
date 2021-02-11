@@ -6,7 +6,7 @@ import {v1} from "uuid";
 export const removeTaskAC = (taskId: string, todolistId: string): TypeAction1 => {
     return {type: 'REMOVE-TASK', taskId, todolistId}
 }
-export const addTaskAC = (title: string, todolistId: string): TypetAction2 => {
+export const addTaskAC = (title: string,todolistId: string): TypetAction2 => {
     return {type: 'ADD-TASK', title, todolistId}
 }
 export const changeTaskStatusAC = (taskId:string,isDone:boolean,todolistId: string,): TypetAction3 => {
@@ -26,7 +26,7 @@ type TypeAction1 = {
     taskId: string
     todolistId: string
 }
-type TypetAction2 = {
+export type TypetAction2 = {
     type: 'ADD-TASK'
     title: string
     todolistId: string
@@ -43,11 +43,14 @@ type TypetAction4 = {
     title: string
     todolistId: string
 }
+let initilalState:TypeTaskState = {
 
+
+}
 
 export type ActionType = TypeAction1 | TypetAction2|TypetAction3|TypetAction4|TypeAddTodolistAction|TypeRemoveTodolistAction
 
-export function taskReducer(state: TypeTaskState, action: ActionType): TypeTaskState {
+export function taskReducer(state: TypeTaskState=initilalState, action: ActionType): TypeTaskState {
     switch (action.type) {
         case 'REMOVE-TASK': {
             let copyState = {...state}
@@ -57,7 +60,7 @@ export function taskReducer(state: TypeTaskState, action: ActionType): TypeTaskS
         case 'ADD-TASK': {
 
             let newTask: PropsTypeTask = {
-                id: "4",
+                id: v1(),
                 title: action.title,
                 isDone: false
             }
