@@ -70,12 +70,11 @@ export function taskReducer(state: TypeTaskState=initilalState, action: ActionTy
             }
         }
         case "CHANGE_TASK":{
-
             return {...state,
                 [action.todolistId]:[...state[action.todolistId].map(task=>{
                     if(task.id===action.taskId){
                         task.isDone=action.isDone
-                        return task
+                        return {...task}
                     }
                     return  task
                 })]
@@ -86,7 +85,7 @@ export function taskReducer(state: TypeTaskState=initilalState, action: ActionTy
                 [action.todolistId]:[...state[action.todolistId].map(task=>{
                     if(task.id===action.taskId){
                         task.title=action.title
-                        return task
+                        return {...task}
                     }
                     return  task
                 })]

@@ -32,7 +32,6 @@ export const todolistID2 = v1();
 
 export function AppWithRedux() {
     const todolists = useSelector<AppRootStateType,Array<ToDoListsType>>(state=>state.todolists)
-    const tasks = useSelector<AppRootStateType,TypeTaskState>(state =>state.tasks)
     const dispatch = useDispatch()
 
 
@@ -62,20 +61,10 @@ export function AppWithRedux() {
                 <Grid container>
 
                     {todolists.map((newToDoList: ToDoListsType) => {
-
-                    let resultTask = tasks[newToDoList.id];
-
-                    if (newToDoList.filter === "active") {
-                        resultTask = tasks[newToDoList.id].filter(t => t.isDone === false)
-                    }
-                    if (newToDoList.filter === "completed") {
-                        resultTask = tasks[newToDoList.id].filter(t => t.isDone === true)
-                    }
                     return <Grid style={{padding: '10px'}} key={newToDoList.id} item xs={3}>
                         <Paper elevation={5} style={{padding: '10px'}}>
                             <ToDoList id={newToDoList.id}
                                       title={newToDoList.title}
-                                      tasks={resultTask}
                                        filter={newToDoList.filter}/>
                         </Paper>
                     </Grid>
