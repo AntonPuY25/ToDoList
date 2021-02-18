@@ -1,47 +1,47 @@
-import React, {ChangeEvent} from 'react';
+import React, {ChangeEvent, useCallback} from 'react';
 import {changeTaskStatusAC, changeTaskTitleAC, removeTaskAC} from "../state/taskReducer";
 import {Checkbox, IconButton} from "@material-ui/core";
 import EditSpan from "../editSpan";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 import {useDispatch} from "react-redux";
+import {PropsTypeTask} from "../ToDoList/ToDoList";
 type TypePropsTask = {
-    taskId:string
+    task:PropsTypeTask
     todolistId: string
-    taskIsDone:boolean
-    taskTitle:string
 
 }
-const Task = (props:TypePropsTask)=>{
+const Task =  React.memo((props:TypePropsTask)=>{
     const dispatch = useDispatch()
-    const removeTask = () => {
-        dispatch(removeTaskAC(props.taskId, props.todolistId))
 
-    }
-    const changeTaskNew = (title: string) => {
-        dispatch(changeTaskTitleAC(props.taskId, title, props.todolistId))
-    }
-    const changeStatus = (e: ChangeEvent<HTMLInputElement>) => {
-        dispatch(changeTaskStatusAC(props.taskId, e.currentTarget.checked, props.todolistId))
+    const removeTask = useCallback( () => {
+        dispatch(removeTaskAC(props.task.id, props.todolistId))
 
-    }
+    },[dispatch,props.task.id,props.todolistId])
+    const changeTaskNew = useCallback((title: string) => {
+        dispatch(changeTaskTitleAC(props.task.id, title, props.todolistId))
+    },[dispatch,props.task.id,props.todolistId])
+    const changeStatus = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+        dispatch(changeTaskStatusAC(props.task.id, e.currentTarget.checked, props.todolistId))
+
+    },[dispatch,props.task.id,props.todolistId])
     return <>
 
-       <div key={props.taskId}>
+
             <div><Checkbox color={"primary"}
                            onChange={changeStatus}
-                           checked={props.taskIsDone}/>
+                           checked={props.task.isDone}/>
                 <EditSpan
-                    title={props.taskTitle} isDone={props.taskIsDone}
+                    title={props.task.title} isDone={props.task.isDone}
                     changeTaskTitle={changeTaskNew}/>
 
                 <span><IconButton onClick={removeTask}><HighlightOffIcon/>
                         </IconButton></span>
             </div>
 
-        </div>
+
 
 
     </>
 
-}
+})
 export default Task;

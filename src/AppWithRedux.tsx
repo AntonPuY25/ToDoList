@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import './App.css';
 import {ToDoList} from "./ToDoList/ToDoList";
 import {PropsTypeTask} from './ToDoList/ToDoList';
@@ -15,8 +15,6 @@ import {useDispatch, useSelector} from "react-redux";
 import {AppRootStateType} from "./state/store";
 
 
-
-
 export type FilterTypes = "all" | "active" | "completed";
 export type TypeTaskState = {
     [key: string]: Array<PropsTypeTask>
@@ -30,18 +28,12 @@ export type ToDoListsType = {
 export const todolistID1 = v1();
 export const todolistID2 = v1();
 
-export function AppWithRedux() {
-    const todolists = useSelector<AppRootStateType,Array<ToDoListsType>>(state=>state.todolists)
+ const AppWithRedux  = React.memo(() =>{
+    const todolists = useSelector<AppRootStateType, Array<ToDoListsType>>(state => state.todolists)
     const dispatch = useDispatch()
-
-
-
-    function addToDoList(todolistTitle: string) {
+    const addToDoList= useCallback( (todolistTitle: string)=> {
         dispatch(AddTodilistAC(todolistTitle))
-
-    }
-
-
+    },[dispatch])
 
     return (
         <div>
@@ -61,14 +53,14 @@ export function AppWithRedux() {
                 <Grid container>
 
                     {todolists.map((newToDoList: ToDoListsType) => {
-                    return <Grid style={{padding: '10px'}} key={newToDoList.id} item xs={3}>
-                        <Paper elevation={5} style={{padding: '10px'}}>
-                            <ToDoList id={newToDoList.id}
-                                      title={newToDoList.title}
-                                       filter={newToDoList.filter}/>
-                        </Paper>
-                    </Grid>
-                })}
+                        return <Grid style={{padding: '10px'}} key={newToDoList.id} item xs={3}>
+                            <Paper elevation={5} style={{padding: '10px'}}>
+                                <ToDoList id={newToDoList.id}
+                                          title={newToDoList.title}
+                                          filter={newToDoList.filter}/>
+                            </Paper>
+                        </Grid>
+                    })}
                 </Grid>
             </Container>
 
@@ -76,7 +68,7 @@ export function AppWithRedux() {
 
 
     );
-}
+})
 
 export default AppWithRedux;
 

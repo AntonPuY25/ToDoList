@@ -7,7 +7,7 @@ type TypeEditSpan={
 
 }
 
-function EditSpan(props:TypeEditSpan){
+const EditSpan = React.memo((props:TypeEditSpan)=>{
     const [editMode,setEditMode] = useState<boolean>(false)
     const [text,setText] = useState<string>(props.title)
     const onEditMode = ()=>{
@@ -27,5 +27,5 @@ function EditSpan(props:TypeEditSpan){
         : <span onDoubleClick={onEditMode} className={(props.isDone) ? 'is-done' : ""}>{props.title}</span>
 
     )
-}
+})
 export default EditSpan;

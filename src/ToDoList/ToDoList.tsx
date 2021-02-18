@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useCallback} from "react";
 import {FilterTypes, TypeTaskState} from "../AppWithRedux";
 import AddItemForm from "../AddItemForm";
 import EditSpan from "../editSpan";
@@ -25,7 +25,7 @@ export type PropsTypeTask = {
 
 }
 
-export function ToDoList(props: PropsType) {
+export const ToDoList = React.memo( (props: PropsType) => {
     const tasks = useSelector<AppRootStateType, TypeTaskState>(state => state.tasks)
     const dispatch = useDispatch()
     let resultTask = tasks[props.id];
@@ -33,28 +33,27 @@ export function ToDoList(props: PropsType) {
     if (props.filter === "active") {
         resultTask = tasks[props.id].filter(t => t.isDone === false)
     }
-
     if (props.filter === "completed") {
         resultTask = tasks[props.id].filter(t => t.isDone === true)
     }
 
-    const onAllKeyHandler = () => {
+    const onAllKeyHandler = useCallback(() => {
         dispatch(changeTodolistFilterAC(props.id, 'all'))
-    }
-    const onActiveKeyHandler = () => {
+    },[dispatch,props.id])
+    const onActiveKeyHandler = useCallback(() => {
         dispatch(changeTodolistFilterAC(props.id, 'active'))
 
-    }
-    const onCompletedKeyHandler = () => {
+    },[dispatch,props.id])
+    const onCompletedKeyHandler = useCallback(() => {
         dispatch(changeTodolistFilterAC(props.id, 'completed'))
 
-    }
-    const addTask = (title: string) => {
+    },[dispatch,props.id])
+    const addTask = useCallback((title: string) => {
         dispatch(addTaskAC(title, props.id))
-    }
-    const changeTodotitle = (title: string) => {
+    },[dispatch,props.id])
+    const changeTodotitle = useCallback((title: string) => {
         dispatch(ChangeToddolistAC(props.id, title))
-    }
+    },[dispatch,props.id])
     return (<div>
         <div>
             <div className={s.delete}><IconButton
@@ -67,9 +66,10 @@ export function ToDoList(props: PropsType) {
             </h3>
 
             <AddItemForm addItems={addTask}/>
+
             {resultTask.map((i: PropsTypeTask) => {
-              return  <Task taskId={i.id} todolistId={props.id} taskIsDone={i.isDone}
-                            taskTitle={i.title}/>
+              return  <Task todolistId={props.id} task={i}
+                             key={i.id}/>
             })}
 
 
@@ -86,4 +86,4 @@ export function ToDoList(props: PropsType) {
             </div>
         </div>
     </div>)
-}
+})
