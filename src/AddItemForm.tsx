@@ -2,7 +2,11 @@ import React, {ChangeEvent, useState, KeyboardEvent} from "react";
 import Button from '@material-ui/core/Button';
 import {TextField} from "@material-ui/core";
 
+<<<<<<< HEAD
 export type TypeAddItemProps = {
+=======
+type TypeAddItemProps = {
+>>>>>>> origin/master
     addItems: (title: string) => void
 }
 

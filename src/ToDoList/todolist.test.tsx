@@ -1,4 +1,10 @@
+<<<<<<< HEAD
 import {todolistID1, todolistID2, TypeTaskState} from "../AppWithRedux";
+=======
+import React, {useState} from "react";
+import {FilterTypes, todolistID1, todolistID2, TypeTaskState} from "../App";
+import {v1} from "uuid";
+>>>>>>> origin/master
 import {PropsTypeTask} from "./ToDoList";
 
 
