@@ -9,7 +9,14 @@ export default {
     title:'AddItemForm',
     component: AddItemForm,
 } as Meta;
-const testFunc = action('TestAction')
-const Template: Story<TypeAddItemProps>=(args)=><AddItemForm addItems={testFunc}/>
 
-export const test1 = Template.bind({});
+const Template: Story<TypeAddItemProps>=(args:TypeAddItemProps)=>{
+    return <>
+        <AddItemForm {...args}/>
+    </>
+}
+
+export const AddItemFormExample = Template.bind({});
+AddItemFormExample.args={
+    addItems:action('Button inside clicked')
+}

@@ -1,6 +1,6 @@
 import React, {ChangeEvent, useState} from "react";
 import {TextField} from "@material-ui/core";
-type TypeEditSpan={
+export type TypeEditSpan={
     title:string
     isDone?:boolean
     changeTaskTitle: ( title: string) => void

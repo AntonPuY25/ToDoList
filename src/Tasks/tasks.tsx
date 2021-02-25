@@ -5,7 +5,7 @@ import EditSpan from "../editSpan";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 import {useDispatch} from "react-redux";
 import {PropsTypeTask} from "../ToDoList/ToDoList";
-type TypePropsTask = {
+export type TypePropsTask = {
     task:PropsTypeTask
     todolistId: string
 
