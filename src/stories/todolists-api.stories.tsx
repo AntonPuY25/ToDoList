@@ -77,6 +77,32 @@ const UpdateTodoLists = () => {
     </div>
 }
 
+const  ReorderTodoLists = () => {
+    const [state, setState] = useState<any>(null)
+    const [reorderTodolist, setReorder] = useState<string>("")
+    const [TodolistId, setId] = useState<string>("")
+
+
+    const reorderTodolistFunc = () => {
+        GetApi.reorderTodolist(TodolistId, reorderTodolist)
+            .then(res => setState(res.data))
+    }
+    const changeTitleTodolist = (e: ChangeEvent<HTMLInputElement>) => {
+        setReorder(e.currentTarget.value)
+    }
+    const setTextTodolistID = (e: ChangeEvent<HTMLInputElement>) => {
+        setId(e.currentTarget.value)
+    }
+    return <div>
+        <label>Reorder</label>
+        <input type={'text'} value={reorderTodolist} onChange={changeTitleTodolist}/>
+        <label>Id</label>
+        <input type={'text'} value={TodolistId} onChange={setTextTodolistID}/>
+        <button onClick={reorderTodolistFunc}>Reorder Todolist</button>
+        {JSON.stringify(state)}
+    </div>
+}
+
 const GetTasks = () => {
     const [state, setState] = useState<any>(null)
     const [TodolistId, setText] = useState<string>("")
@@ -182,30 +208,67 @@ const UpdateTask = () => {
     </div>
 }
 
+const ReorderTask = () => {
+    const [state, setState] = useState<any>(null)
+    const [TodolistId, setTodolistId] = useState<string>("")
+    const [TaskId, setTaskId] = useState<string>("")
+    const [Reorder, setReorder] = useState<string>("")
+        const changeTask = ()=>{
+            GetApi.reorderTask(TodolistId,
+                TaskId, Reorder)
+                .then(res => setState(res.data.data.item))
+        }
+
+
+    const createTaskId = (e: ChangeEvent<HTMLInputElement>) => {
+        setTaskId(e.currentTarget.value)
+    }
+    const createTodolistId = (e: ChangeEvent<HTMLInputElement>) => {
+        setTodolistId(e.currentTarget.value)
+    }
+    const changeNewTaskTitle = (e: ChangeEvent<HTMLInputElement>) => {
+        setReorder(e.currentTarget.value)
+    }
+    return <div>
+        <label>Todolist ID</label>
+        <input type={'text'} value={TodolistId} onChange={createTodolistId}/>
+        <label>Task ID</label>
+        <input type={'text'} value={TaskId} onChange={createTaskId}/>
+        <label>Reorder</label>
+        <input type={'text'} value={Reorder} onChange={changeNewTaskTitle}/>
+        <button onClick={changeTask}>Reorder Task</button>
+        {JSON.stringify(state)}
+    </div>
+}
+
 
 export default {
     title: 'API',
     component: GetTodoLists, CreateTodoLists, RemoveTodoLists, UpdateTodoLists, GetTasks, CreateTask,
-    DeleteTask, UpdateTask
+    DeleteTask, UpdateTask,ReorderTodoLists,ReorderTask
 } as Meta;
 
 const TemplateGet: Story = () => <GetTodoLists/>;
 const Template1Create: Story = () => <CreateTodoLists/>
 const TemplateDelete: Story = () => <RemoveTodoLists/>
 const TemplateUpdate: Story = () => <UpdateTodoLists/>
+const TemplateReorderTodoLists: Story = () => <ReorderTodoLists/>
 const TemplateGetTasks: Story = () => <GetTasks/>
 const TemplateCreateTask: Story = () => <CreateTask/>
 const TemplateDeleteTask: Story = () => <DeleteTask/>
 const TemplateUpdateTask: Story = () => <UpdateTask/>
+const TemplateReorderTask: Story = () => <ReorderTask/>
 
 
 export const GetTodoLists_ = TemplateGet.bind({});
 export const CreateTodolist_ = Template1Create.bind({});
 export const DeleteTodolist_ = TemplateDelete.bind({});
 export const UpdateTodoList_ = TemplateUpdate.bind({});
+export const ReorderTodoLists_ = TemplateReorderTodoLists.bind({});
 export const GetTasks_ = TemplateGetTasks.bind({});
 export const CreateTask_ = TemplateCreateTask.bind({});
 export const DeleteTask_ = TemplateDeleteTask.bind({});
 export const UpdateTask_ = TemplateUpdateTask.bind({});
+export const ReorderTask_ = TemplateReorderTask.bind({});
 
 

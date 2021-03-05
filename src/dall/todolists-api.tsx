@@ -4,7 +4,7 @@ const instance = axios.create({
     baseURL: 'https://social-network.samuraijs.com/api/1.1/',
     withCredentials: true,
     headers: {
-        'API-KEY': '9943ad9b-2b43-46f7-bddd-09fd21e745ce'
+        'API-KEY': 'c9a11d0b-1bf4-4a0d-8b85-3f35229d5cc6'
     }
 
 })
@@ -54,6 +54,9 @@ const GetApi = {
     updateTodolist: (todolistId: string, title: string) => {
         return instance.put<TypeResponseDeleteAndUpdate>(`todo-lists/${todolistId}`, {title})
     },
+    reorderTodolist:(todolistId: string,putAfterItemId:string)=>{
+        return instance.put<TypeResponseDeleteAndUpdate>(`/todo-lists/${todolistId}/reorder`,{putAfterItemId})
+    },
     getTasks: (todolistId: string) => {
         return instance.get<TypeResponseTask>(`todo-lists/${todolistId}/tasks?count=10&page=1`)
     },
@@ -66,6 +69,11 @@ const GetApi = {
     updateTask: (todolistId: string, taskId: string, title: string) => {
         return instance.put<TypeResponseDeleteAndUpdate<TypeData>>(`/todo-lists/${todolistId}/tasks/${taskId}`, {
             title,
+        })
+    },
+    reorderTask: (todolistId: string, taskId: string, putAfterItemId: string) => {
+        return instance.put<TypeResponseDeleteAndUpdate<TypeData>>(`/todo-lists/${todolistId}/tasks/${taskId}`, {
+            putAfterItemId,
         })
     }
 }
