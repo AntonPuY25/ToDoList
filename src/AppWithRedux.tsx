@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import './App.css';
 import {ToDoList} from "./ToDoList/ToDoList";
 import {v1} from "uuid";
@@ -11,7 +11,8 @@ import {
 } from "./state/taskReducer";
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootStateType} from "./state/store";
-import {TypeTodolistReducer} from "./state/todolistReducer";
+import {setTodolist, TypeTodolistReducer} from "./state/todolistReducer";
+import GetApi from "./dall/todolists-api";
 
 export type TypeFilter = 'all'|'active'|'completed';
 
@@ -19,12 +20,20 @@ export const todolistID1 = v1();
 export const todolistID2 = v1();
 
  const AppWithRedux  = React.memo(() =>{
+
     const todolists = useSelector<AppRootStateType, Array<TypeTodolistReducer>>(state => state.todolists)
     const dispatch = useDispatch()
     const addToDoList= useCallback( (todolistTitle: string)=> {
         dispatch(AddTodilistAC(todolistTitle))
     },[dispatch])
+     useEffect(()=>{
+        async  function test(){
+            let result = await  GetApi.getTodoLists()
+            dispatch(setTodolist(result))
+        }
+        test()
 
+     },[dispatch])
     return (
         <div>
             <AppBar position="static">

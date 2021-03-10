@@ -7,7 +7,7 @@ const GetTodoLists = () => {
     const [state, setState] = useState<any>(null)
     useEffect(() => {
         GetApi.getTodoLists()
-            .then(res => setState(res.data))
+            .then(res => setState(res))
     }, [])
 
     return <div>{JSON.stringify(state)}</div>

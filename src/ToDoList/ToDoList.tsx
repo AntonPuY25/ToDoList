@@ -1,4 +1,4 @@
-import React, {useCallback} from "react";
+import React, {useCallback, useEffect} from "react";
 import AddItemForm from "../AddItemForm";
 import EditSpan from "../editSpan";
 import {Button, IconButton} from "@material-ui/core";
@@ -6,10 +6,10 @@ import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import s from './todolist.module.css'
 import {useDispatch, useSelector} from "react-redux";
 import {ChangeToddolistAC, changeTodolistFilterAC, RemoveTodolistAC} from "../state/todolistReducer";
-import {addTaskAC, TypeTaskReducer} from "../state/taskReducer";
+import {addTaskAC, getTaskTC, TypeTaskReducer} from "../state/taskReducer";
 import {AppRootStateType} from "../state/store";
 import Task from "../Tasks/tasks";
-import {TypeStatusTask, TypeTaskItems} from "../dall/todolists-api";
+import  {TypeStatusTask, TypeTaskItems} from "../dall/todolists-api";
 import {TypeFilter} from "../AppWithRedux";
 
 type PropsType = {
@@ -23,6 +23,9 @@ type PropsType = {
 export const ToDoList = React.memo( (props: PropsType) => {
     const tasks = useSelector<AppRootStateType, TypeTaskReducer>(state => state.tasks)
     const dispatch = useDispatch()
+    useEffect(()=>{
+        dispatch(getTaskTC(props.id))
+    },[dispatch,props.id])
     let resultTask = tasks[props.id];
 
     if (props.filter === "active") {

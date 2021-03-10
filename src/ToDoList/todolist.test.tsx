@@ -1,25 +1,82 @@
-import { todolistID1, todolistID2, TypeTaskState} from "../AppWithRedux";
+import {todolistID1, todolistID2} from "../AppWithRedux";
+import {TypeTaskReducer} from "../state/taskReducer";
+import {PriorityType, TypeStatusTask, TypeTaskItems} from "../dall/todolists-api";
 
 
-import {PropsTypeTask} from "./ToDoList";
-
-
-
-let tasks:TypeTaskState
+let tasks:TypeTaskReducer
 
 
 beforeEach(()=>{
      tasks={
         [todolistID1]: [
-            {id: "1", title: 'Html', isDone: true},
-            {id: "2", title: 'Css', isDone: false},
-            {id: "3", title: 'JS', isDone: true},
-            {id: "4", title: 'React', isDone: false}
+            {description: "",
+                title: 'CSS',
+                completed: true,
+                status: TypeStatusTask.New,
+                priority: PriorityType.Hi,
+                startDate: "",
+                deadline: "",
+                id: '1',
+                todoListId: "todolistId1",
+                order: 1,
+                addedDate:""},
+            {description: "",
+                title: 'HTML',
+                completed: true,
+                status: TypeStatusTask.New,
+                priority: PriorityType.Hi,
+                startDate: "",
+                deadline: "",
+                id: '2',
+                todoListId: "todolistId1",
+                order: 2,
+                addedDate:""},
+            {description: "",
+                title: 'JS',
+                completed: true,
+                status: TypeStatusTask.New,
+                priority: PriorityType.Hi,
+                startDate: "",
+                deadline: "",
+                id: '3',
+                todoListId: "todolistId1",
+                order: 3,
+                addedDate:""},
         ],
         [todolistID2]: [
-            {id: "1", title: 'Milk', isDone: true},
-            {id: "2", title: 'Bread', isDone: false},
-            {id: "3", title: 'Butter', isDone: true},
+            {description: "",
+                title: 'CSS',
+                completed: true,
+                status: TypeStatusTask.New,
+                priority: PriorityType.Hi,
+                startDate: "",
+                deadline: "",
+                id: '1',
+                todoListId: "todolistId1",
+                order: 1,
+                addedDate:""},
+            {description: "",
+                title: 'HTML',
+                completed: true,
+                status: TypeStatusTask.New,
+                priority: PriorityType.Hi,
+                startDate: "",
+                deadline: "",
+                id: '2',
+                todoListId: "todolistId1",
+                order: 2,
+                addedDate:""},
+            {description: "",
+                title: 'JS',
+                completed: true,
+                status: TypeStatusTask.New,
+                priority: PriorityType.Hi,
+                startDate: "",
+                deadline: "",
+                id: '3',
+                todoListId: "todolistId1",
+                order: 3,
+                addedDate:""},
 
         ]
 
@@ -33,41 +90,106 @@ test('Check addTask ',()=>{
 
     function addTask(title: string, toDoListId: string) {
 
-        const newTask: PropsTypeTask = {
-            id: "5",
-            title: title,
-            isDone: false
+        const newTask: TypeTaskItems = {
+            description: "",
+            title: 'Hello',
+            completed: true,
+            status: TypeStatusTask.New,
+            priority: PriorityType.Hi,
+            startDate: "",
+            deadline: "",
+            id: '4',
+            todoListId: "todolistId1",
+            order: 1,
+            addedDate:""
         }
         tasks[toDoListId] = [newTask, ...tasks[toDoListId]]
     }
 addTask('Hello',todolistID1)
 
 
-    expect(tasks[todolistID1].length).toBe(5)
+    expect(tasks[todolistID1].length).toBe(4)
     expect(tasks[todolistID2]).toEqual([
-        {
-            "id": "1",
-            "isDone": true,
-            "title": "Milk"
-        },
-        {
-            "id": "2",
-            "isDone": false,
-            "title": "Bread"
-        },
-        {
-            "id": "3",
-            "isDone": true,
-            "title": "Butter"
-        }
+        {description: "",
+            title: 'CSS',
+            completed: true,
+            status: TypeStatusTask.New,
+            priority: PriorityType.Hi,
+            startDate: "",
+            deadline: "",
+            id: '1',
+            todoListId: "todolistId1",
+            order: 1,
+            addedDate:""},
+        {description: "",
+            title: 'HTML',
+            completed: true,
+            status: TypeStatusTask.New,
+            priority: PriorityType.Hi,
+            startDate: "",
+            deadline: "",
+            id: '2',
+            todoListId: "todolistId1",
+            order: 2,
+            addedDate:""},
+        {description: "",
+            title: 'JS',
+            completed: true,
+            status: TypeStatusTask.New,
+            priority: PriorityType.Hi,
+            startDate: "",
+            deadline: "",
+            id: '3',
+            todoListId: "todolistId1",
+            order: 3,
+            addedDate:""},
     ])
     expect(tasks[todolistID2][0].id).toBe('1')
     expect(tasks[todolistID1]).toEqual( [
-        {id: "5", title: 'Hello', isDone: false},
-        {id: "1", title: 'Html', isDone: true},
-        {id: "2", title: 'Css', isDone: false},
-        {id: "3", title: 'JS', isDone: true},
-        {id: "4", title: 'React', isDone: false}
+        {description: "",
+            title: 'Hello',
+            completed: true,
+            status: TypeStatusTask.New,
+            priority: PriorityType.Hi,
+            startDate: "",
+            deadline: "",
+            id: '4',
+            todoListId: "todolistId1",
+            order: 1,
+            addedDate:""},
+        {description: "",
+            title: 'CSS',
+            completed: true,
+            status: TypeStatusTask.New,
+            priority: PriorityType.Hi,
+            startDate: "",
+            deadline: "",
+            id: '1',
+            todoListId: "todolistId1",
+            order:1,
+            addedDate:""},
+        {description: "",
+            title: 'HTML',
+            completed: true,
+            status: TypeStatusTask.New,
+            priority: PriorityType.Hi,
+            startDate: "",
+            deadline: "",
+            id: '2',
+            todoListId: "todolistId1",
+            order: 2,
+            addedDate:""},
+        {description: "",
+            title: 'JS',
+            completed: true,
+            status: TypeStatusTask.New,
+            priority: PriorityType.Hi,
+            startDate: "",
+            deadline: "",
+            id: '3',
+            todoListId: "todolistId1",
+            order: 3,
+            addedDate:""}
     ])
 
 })
@@ -75,29 +197,29 @@ addTask('Hello',todolistID1)
 test ("Check deleteTask",()=>{
     let deleteTask = (id: string, toDoListId: string) => {
         let toDoListTask = tasks[toDoListId]
-        tasks[toDoListId] = toDoListTask.filter((tasks: PropsTypeTask) => {
+        tasks[toDoListId] = toDoListTask.filter((tasks: TypeTaskItems) => {
             return tasks.id !== id
         })
     }
      deleteTask('1',todolistID1)
 
-    expect(tasks[todolistID1].length).toBe(3)
+    expect(tasks[todolistID1].length).toBe(2)
     expect(tasks[todolistID2].length).toBe(3)
-    expect(tasks[todolistID1][0].title).toBe('Css')
+    expect(tasks[todolistID1][0].title).toBe('HTML')
 
 })
 test('Check changeStatus',()=>{
 
-    function changeStatus(taskId: string, isDone: boolean, toDiListId: string) {
+    function changeStatus(taskId: string, status: TypeStatusTask, toDiListId: string) {
         let todolistTasks = tasks[toDiListId]
         const task = todolistTasks.find(t => t.id === taskId)
 
         if (task) {
-            task.isDone = isDone
+            task.status =TypeStatusTask.New
         }}
-        changeStatus('1',false,todolistID1)
-        changeStatus('1',false,todolistID2)
-    expect(tasks[todolistID1][0].isDone).toBe(false)
-    expect(tasks[todolistID2][0].isDone).toBe(false)
-    expect(tasks[todolistID1][2].isDone).toBe(true)
+        changeStatus('1',0,todolistID1)
+        changeStatus('1',0,todolistID2)
+    expect(tasks[todolistID1][0].status).toBe(0)
+    expect(tasks[todolistID2][0].status).toBe(0)
+    expect(tasks[todolistID1][2].status).toBe(0)
 })

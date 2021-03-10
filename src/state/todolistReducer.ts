@@ -24,6 +24,13 @@ export const changeTodolistFilterAC = (id: string, filter: TypeFilter): TypeChan
         filter
     }
 }
+export const setTodolist = (todolists:Array<TypeTodolist>)=>{
+    return{
+        type:'todolist_reducer/SET_TODOLISTS',
+        todolists
+    } as const
+}
+export type TypeSetTodolistAction = ReturnType<typeof setTodolist>
 export type TypeRemoveTodolistAction = {
     type: 'REMOVE-TODOLIST'
     id: string
@@ -49,7 +56,8 @@ export type ActionType =
     TypeRemoveTodolistAction
     | TypeAddTodolistAction
     | TypeChangeTodoolistAction
-    | TypeChangeTodoolistFilterAction;
+    | TypeChangeTodoolistFilterAction
+    | TypeSetTodolistAction;
 
 export function TodolistReducer(state: Array<TypeTodolistReducer> = initialState, action: ActionType): Array<TypeTodolistReducer> {
     switch (action.type) {
@@ -85,7 +93,15 @@ export function TodolistReducer(state: Array<TypeTodolistReducer> = initialState
                 return tl
 
             })
+        case "todolist_reducer/SET_TODOLISTS":{
+            return action.todolists.map(td=> {
+               return{
+                   ...td,
+                   filter:"all"
+               }
+            })
 
+        }
         default:
             return state
     }

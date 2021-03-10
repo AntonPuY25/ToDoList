@@ -1,6 +1,8 @@
-import {TypeAddTodolistAction, TypeRemoveTodolistAction} from "./todolistReducer";
+import {TypeAddTodolistAction, TypeRemoveTodolistAction, TypeSetTodolistAction} from "./todolistReducer";
 import {v1} from "uuid";
-import {PriorityType, TypeStatusTask, TypeTaskItems} from "../dall/todolists-api";
+import GetApi, {PriorityType, TypeStatusTask, TypeTaskItems} from "../dall/todolists-api";
+import {ThunkAction} from "redux-thunk";
+import {AppRootStateType} from "./store";
 
 export const removeTaskAC = (taskId: string, todoListId: string): TypeAction1 => {
     return {type: 'REMOVE-TASK', taskId, todoListId}
@@ -20,6 +22,10 @@ export const AddTodilistAC = (title: string,): TypeAddTodolistAction => {
 export const RemoveTodolistAC = (todoListId: string): TypeRemoveTodolistAction => {
     return {type: 'REMOVE-TODOLIST', id: todoListId}
 }
+export const getTasksAC = (todoListId: string,tasks:Array<TypeTaskItems>) => {
+    return {type: 'GET-TASKS',  todoListId,tasks} as const
+}
+type TypeActionGetTasks = ReturnType<typeof getTasksAC>
 type TypeAction1 = {
     type: 'REMOVE-TASK'
     taskId: string
@@ -54,6 +60,8 @@ export type ActionType =
     | TypetAction4
     | TypeAddTodolistAction
     | TypeRemoveTodolistAction
+    |TypeSetTodolistAction
+    |TypeActionGetTasks
 
 export function taskReducer(state: TypeTaskReducer = initilalState, action: ActionType): TypeTaskReducer {
     switch (action.type) {
@@ -114,14 +122,35 @@ export function taskReducer(state: TypeTaskReducer = initilalState, action: Acti
                 [action.todoListId]: []
             }
         }
-        case 'REMOVE-TODOLIST':
+
+        case 'REMOVE-TODOLIST':{
             let copyState = {...state}
             delete copyState[action.id]
             return copyState
+        }
+
+
+        case "todolist_reducer/SET_TODOLISTS":{
+            let copyState = {...state}
+                action.todolists.forEach(td => {
+                    copyState[td.id]=[]
+            })
+            return copyState;
+        }
+        case "GET-TASKS":{
+            return{
+                ...state,
+                [action.todoListId]:action.tasks.map(task=>task)
+            }
+        }
 
         default:
             return state
     }
+}
 
-
+export const getTaskTC = (todoListId:string):ThunkAction<void, AppRootStateType, unknown, ActionType>=>
+    async (dispatch)=>{
+    let result = await  GetApi.getTasks(todoListId)
+        dispatch(getTasksAC(todoListId,result.data.items))
 }

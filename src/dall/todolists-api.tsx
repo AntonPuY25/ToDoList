@@ -56,7 +56,10 @@ export type TypeResponseTask = {
 
 const GetApi = {
     getTodoLists: () => {
-        return instance.get<TypeTodolist>('todo-lists')
+        return instance.get<Array<TypeTodolist>>('todo-lists').then(response =>{
+
+            return response.data
+        })
     },
     setTodolist: (title: string) => {
         return instance.post<TypeResponseDeleteAndUpdate<TypeData>>(`todo-lists`, {title})
