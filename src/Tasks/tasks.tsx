@@ -4,9 +4,10 @@ import {Checkbox, IconButton} from "@material-ui/core";
 import EditSpan from "../editSpan";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 import {useDispatch} from "react-redux";
-import {PropsTypeTask} from "../ToDoList/ToDoList";
+import { TypeTaskItems} from "../dall/todolists-api";
+
 export type TypePropsTask = {
-    task:PropsTypeTask
+    task:TypeTaskItems
     todolistId: string
 
 }
@@ -21,7 +22,10 @@ const Task =  React.memo((props:TypePropsTask)=>{
         dispatch(changeTaskTitleAC(props.task.id, title, props.todolistId))
     },[dispatch,props.task.id,props.todolistId])
     const changeStatus = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-        dispatch(changeTaskStatusAC(props.task.id, e.currentTarget.checked, props.todolistId))
+
+        dispatch(changeTaskStatusAC(props.task.id,
+
+            e.currentTarget.checked?2:0, props.todolistId))
 
     },[dispatch,props.task.id,props.todolistId])
     return <>
@@ -29,10 +33,12 @@ const Task =  React.memo((props:TypePropsTask)=>{
 
             <div><Checkbox color={"primary"}
                            onChange={changeStatus}
-                           checked={props.task.isDone}/>
+                           checked={props.task.status===0?false:true}/>
                 <EditSpan
-                    title={props.task.title} isDone={props.task.isDone}
-                    changeTaskTitle={changeTaskNew}/>
+                    title={props.task.title}
+                    changeTaskTitle={changeTaskNew}
+                    status={props.task.status}
+                />
 
                 <span><IconButton onClick={removeTask}><HighlightOffIcon/>
                         </IconButton></span>

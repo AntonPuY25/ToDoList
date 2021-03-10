@@ -1,9 +1,12 @@
 import React, {ChangeEvent, useState} from "react";
 import {TextField} from "@material-ui/core";
+import {TypeStatusTask} from "./dall/todolists-api";
+
 export type TypeEditSpan={
     title:string
-    isDone?:boolean
     changeTaskTitle: ( title: string) => void
+    status?:TypeStatusTask
+
 
 }
 
@@ -23,8 +26,9 @@ const EditSpan = React.memo((props:TypeEditSpan)=>{
 
     }
     return(
+
         editMode?<TextField value={text}  size={"small"} onChange={changeText} autoFocus onBlur={ofEditMode}/>
-        : <span onDoubleClick={onEditMode} className={(props.isDone) ? 'is-done' : ""}>{props.title}</span>
+        : <span onDoubleClick={onEditMode} className={(props.status===TypeStatusTask.Completed) ? 'is-done' : ""}>{props.title}</span>
 
     )
 })

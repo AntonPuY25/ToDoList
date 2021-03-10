@@ -1,5 +1,4 @@
 import React, {useCallback} from "react";
-import {FilterTypes, TypeTaskState} from "../AppWithRedux";
 import AddItemForm from "../AddItemForm";
 import EditSpan from "../editSpan";
 import {Button, IconButton} from "@material-ui/core";
@@ -7,34 +6,31 @@ import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import s from './todolist.module.css'
 import {useDispatch, useSelector} from "react-redux";
 import {ChangeToddolistAC, changeTodolistFilterAC, RemoveTodolistAC} from "../state/todolistReducer";
-import {addTaskAC} from "../state/taskReducer";
+import {addTaskAC, TypeTaskReducer} from "../state/taskReducer";
 import {AppRootStateType} from "../state/store";
 import Task from "../Tasks/tasks";
+import {TypeStatusTask, TypeTaskItems} from "../dall/todolists-api";
+import {TypeFilter} from "../AppWithRedux";
 
 type PropsType = {
     title: string
-    filter: FilterTypes
     id: string
-
+    filter:TypeFilter
 }
 
-export type PropsTypeTask = {
-    id: string
-    title: string
-    isDone: boolean
 
-}
 
 export const ToDoList = React.memo( (props: PropsType) => {
-    const tasks = useSelector<AppRootStateType, TypeTaskState>(state => state.tasks)
+    const tasks = useSelector<AppRootStateType, TypeTaskReducer>(state => state.tasks)
     const dispatch = useDispatch()
     let resultTask = tasks[props.id];
 
     if (props.filter === "active") {
-        resultTask = tasks[props.id].filter(t => t.isDone === false)
+
+        resultTask = tasks[props.id].filter((t:TypeTaskItems) => t.status === TypeStatusTask.New)
     }
     if (props.filter === "completed") {
-        resultTask = tasks[props.id].filter(t => t.isDone === true)
+        resultTask = tasks[props.id].filter(t => t.status === TypeStatusTask.Completed)
     }
 
     const onAllKeyHandler = useCallback(() => {
@@ -63,13 +59,14 @@ export const ToDoList = React.memo( (props: PropsType) => {
                 <EditSpan
                     title={props.title}
                     changeTaskTitle={changeTodotitle}/>
+
             </h3>
 
             <AddItemForm addItems={addTask}/>
 
-            {resultTask.map((i: PropsTypeTask) => {
+            {resultTask.map((i: TypeTaskItems) => {
               return  <Task todolistId={props.id} task={i}
-                             key={i.id}/>
+                             key={i.id}  />
             })}
 
 

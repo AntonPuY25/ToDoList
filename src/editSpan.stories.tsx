@@ -22,5 +22,5 @@ export const TaskExample = Template.bind({});
 TaskExample.args = {
     ...baseArgs,
      title:"Test",
-    isDone:false
+
 }

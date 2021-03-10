@@ -6,28 +6,41 @@ const instance = axios.create({
     headers: {
         'API-KEY': 'c9a11d0b-1bf4-4a0d-8b85-3f35229d5cc6'
     }
-
 })
-type TypeTodolist = {
+
+export enum PriorityType {
+    Low=0,
+    Middle = 1,
+    Hi=2,
+    Urgently = 3,
+    Later =4,
+}
+export enum TypeStatusTask  {
+    New=0,
+    InProgress =1,
+    Completed=2,
+    Draft =3,
+}
+export type TypeTodolist = {
     id: string
     title: string
     addedDate: string
     order: number
 }
-type TypeData = {
+export type TypeData = {
     item: TypeTodolist
 }
-type TypeResponseDeleteAndUpdate<D = {}> = {
+export type TypeResponseDeleteAndUpdate<D = {}> = {
     resultCode: number
     messages: string[]
     data: D
 }
-type TypeTaskItems = {
+export type TypeTaskItems = {
     description: string
     title: string
     completed: boolean
-    status: number
-    priority: number
+    status: TypeStatusTask
+    priority: PriorityType
     startDate: string
     deadline: string
     id: string
@@ -35,7 +48,7 @@ type TypeTaskItems = {
     order: number
     addedDate: string
 }
-type TypeResponseTask = {
+export type TypeResponseTask = {
     items: Array<TypeTaskItems>
     totalCount: number
     error: boolean

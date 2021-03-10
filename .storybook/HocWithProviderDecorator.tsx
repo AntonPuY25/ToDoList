@@ -1,10 +1,11 @@
 import React from 'react';
 import {Provider} from "react-redux";
-import {AppRootStateType, store} from "../src/state/store";
+import {AppRootStateType} from "../src/state/store";
 import {combineReducers, createStore} from "redux";
 import {taskReducer} from "../src/state/taskReducer";
 import {TodolistReducer} from "../src/state/todolistReducer";
 import {v1} from "uuid";
+import {PriorityType, TypeStatusTask} from "../src/dall/todolists-api";
 
 const rootReducer = combineReducers({
     tasks: taskReducer,
@@ -12,18 +13,68 @@ const rootReducer = combineReducers({
 })
 const initialGlobalState = {
     todolists:[
-        {id:'todolist1',title:'What to Learn',filter:'all'},
-        {id:'todolist2',title:'What to Buy',filter:'all'}
+        { id: 'todolist1',
+            title: 'Todolist1',
+            addedDate: "",
+            order: 1,
+            filter:'all',},
+        { id: 'todolist2',
+            title: 'Todolist2',
+            addedDate: "",
+            order: 2,
+            filter:'all',},
     ],
     tasks:{
         ['todolist1']:[
-            {id:v1(),title:'HTML',isDone: true},
-            {id:v1(),title:'CSS',isDone: false}
+            { description: "",
+                title: "Task1" ,
+                completed: true,
+                status: TypeStatusTask.Completed,
+                priority: PriorityType.Hi,
+                startDate: "",
+                deadline: "",
+                id: v1(),
+                todoListId: 'todolist1',
+                order: 1,
+                addedDate:"",},
+
+            { description: "",
+                title: "Task2" ,
+                completed: true,
+                status: TypeStatusTask.New,
+                priority: PriorityType.Hi,
+                startDate: "",
+                deadline: "",
+                id: v1(),
+                todoListId: 'todolist1',
+                order: 2,
+                addedDate:"",}
         ],
         ['todolist2']:[
-            {id:v1(),title:'Milk',isDone: true},
-            {id:v1(),title:'Butter',isDone: false}
-        ]
+            { description: "",
+                title: "Task1" ,
+                completed: true,
+                status: TypeStatusTask.Completed,
+                priority: PriorityType.Hi,
+                startDate: "",
+                deadline: "",
+                id: v1(),
+                todoListId: 'todolist2',
+                order: 1,
+                addedDate:"",},
+
+            { description: "",
+                title: "Task2" ,
+                completed: true,
+                status: TypeStatusTask.New,
+                priority: PriorityType.Hi,
+                startDate: "",
+                deadline: "",
+                id: v1(),
+                todoListId: 'todolist2',
+                order: 2,
+                addedDate:"",}
+        ],
     }
 }
 

@@ -1,11 +1,12 @@
-import {FilterTypes, ToDoListsType} from "../AppWithRedux";
 import {v1} from "uuid";
+import {TypeFilter} from "../AppWithRedux";
+import {TypeTodolist} from "../dall/todolists-api";
 
 export const RemoveTodolistAC = (todolistId: string): TypeRemoveTodolistAction => {
     return {type: 'REMOVE-TODOLIST', id: todolistId}
 }
 export const AddTodilistAC = (title: string): TypeAddTodolistAction => {
-    return {type: 'ADD-TODOLIST', title, todolistId: v1()}
+    return {type: 'ADD-TODOLIST', title, todoListId: v1()}
 }
 
 
@@ -16,7 +17,7 @@ export const ChangeToddolistAC = (id: string, title: string): TypeChangeTodoolis
         title
     }
 }
-export const changeTodolistFilterAC = (id: string, filter: FilterTypes): TypeChangeTodoolistFilterAction => {
+export const changeTodolistFilterAC = (id: string, filter: TypeFilter): TypeChangeTodoolistFilterAction => {
     return {
         type: "CHANGE_TODOLIST_FILTER",
         id,
@@ -30,7 +31,7 @@ export type TypeRemoveTodolistAction = {
 export type TypeAddTodolistAction = {
     type: 'ADD-TODOLIST'
     title: string
-    todolistId: string
+    todoListId: string
 }
 type TypeChangeTodoolistAction = {
     type: "CHANGE_TODOLIST_TITLE"
@@ -40,31 +41,36 @@ type TypeChangeTodoolistAction = {
 type TypeChangeTodoolistFilterAction = {
     type: "CHANGE_TODOLIST_FILTER"
     id: string
-    filter: FilterTypes
+    filter: TypeFilter
 }
-let initialState: Array<ToDoListsType> = []
+export type TypeTodolistReducer = TypeTodolist&{filter:TypeFilter}
+let initialState: Array<TypeTodolistReducer> = []
 export type ActionType =
     TypeRemoveTodolistAction
     | TypeAddTodolistAction
     | TypeChangeTodoolistAction
     | TypeChangeTodoolistFilterAction;
 
-export function TodolistReducer(state: Array<ToDoListsType> = initialState, action: ActionType): Array<ToDoListsType> {
+export function TodolistReducer(state: Array<TypeTodolistReducer> = initialState, action: ActionType): Array<TypeTodolistReducer> {
     switch (action.type) {
         case 'REMOVE-TODOLIST':
             return state.filter(tl => tl.id !== action.id)
         case 'ADD-TODOLIST':
-            const newToDolist: ToDoListsType = {
-                id: action.todolistId,
+
+            const newToDolist:TypeTodolistReducer  = {
+                id: action.todoListId,
                 title: action.title,
-                filter: 'all'
+                addedDate: "",
+                order: 1,
+                filter:'all',
             }
             return [
                 ...state, newToDolist
             ]
         case "CHANGE_TODOLIST_TITLE":
-            return state.map(tl => {
+            return state.map((tl) => {
                 if (tl.id === action.id) {
+
                     return {...tl, title: action.title}
                 }
                 return tl
@@ -73,6 +79,7 @@ export function TodolistReducer(state: Array<ToDoListsType> = initialState, acti
         case "CHANGE_TODOLIST_FILTER":
             return state.map(tl => {
                 if (tl.id === action.id) {
+
                     return {...tl, filter: action.filter}
                 }
                 return tl
