@@ -1,6 +1,6 @@
 import {TypeAddTodolistAction, TypeRemoveTodolistAction, TypeSetTodolistAction} from "./todolistReducer";
 import {v1} from "uuid";
-import GetApi, {PriorityType, TypeStatusTask, TypeTaskItems} from "../dall/todolists-api";
+import GetApi, {PriorityType, TypeStatusTask, TypeTaskItems, TypeTodolist} from "../dall/todolists-api";
 import {ThunkAction} from "redux-thunk";
 import {AppRootStateType} from "./store";
 
@@ -16,8 +16,8 @@ export const changeTaskStatusAC = (taskId: string, status: TypeStatusTask, todoL
 export const changeTaskTitleAC = (taskId: string, title: string, todoListId: string,): TypetAction4 => {
     return {type: 'CHANGE_TASK_TITLE', taskId, title, todoListId,}
 }
-export const AddTodilistAC = (title: string,): TypeAddTodolistAction => {
-    return {type: 'ADD-TODOLIST', title, todoListId: v1()}
+export const AddTodilistAC = (todolist:TypeTodolist): TypeAddTodolistAction => {
+    return {type: 'ADD-TODOLIST', todolist, }
 }
 export const RemoveTodolistAC = (todoListId: string): TypeRemoveTodolistAction => {
     return {type: 'REMOVE-TODOLIST', id: todoListId}
@@ -119,7 +119,7 @@ export function taskReducer(state: TypeTaskReducer = initilalState, action: Acti
         case 'ADD-TODOLIST': {
             return {
                 ...state,
-                [action.todoListId]: []
+                [action.todolist.id]: []
             }
         }
 

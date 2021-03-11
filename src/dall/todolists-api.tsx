@@ -57,7 +57,6 @@ export type TypeResponseTask = {
 const GetApi = {
     getTodoLists: () => {
         return instance.get<Array<TypeTodolist>>('todo-lists').then(response =>{
-
             return response.data
         })
     },

@@ -5,11 +5,11 @@ import {Button, IconButton} from "@material-ui/core";
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import s from './todolist.module.css'
 import {useDispatch, useSelector} from "react-redux";
-import {ChangeToddolistAC, changeTodolistFilterAC, RemoveTodolistAC} from "../state/todolistReducer";
+import {changeTodolistFilterAC, removeTodolistTC, updateTodolistTC} from "../state/todolistReducer";
 import {addTaskAC, getTaskTC, TypeTaskReducer} from "../state/taskReducer";
 import {AppRootStateType} from "../state/store";
 import Task from "../Tasks/tasks";
-import  {TypeStatusTask, TypeTaskItems} from "../dall/todolists-api";
+import {TypeStatusTask, TypeTaskItems} from "../dall/todolists-api";
 import {TypeFilter} from "../AppWithRedux";
 
 type PropsType = {
@@ -51,12 +51,12 @@ export const ToDoList = React.memo( (props: PropsType) => {
         dispatch(addTaskAC(title, props.id))
     },[dispatch,props.id])
     const changeTodotitle = useCallback((title: string) => {
-        dispatch(ChangeToddolistAC(props.id, title))
+        dispatch(updateTodolistTC(props.id, title))
     },[dispatch,props.id])
     return (<div>
         <div>
             <div className={s.delete}><IconButton
-                onClick={() => dispatch(RemoveTodolistAC(props.id))}><DeleteForeverIcon/></IconButton></div>
+                onClick={() => dispatch(removeTodolistTC(props.id))}><DeleteForeverIcon/></IconButton></div>
 
             <h3 className={s.test} style={{textAlign: 'center'}}>
                 <EditSpan

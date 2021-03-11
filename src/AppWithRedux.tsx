@@ -5,14 +5,9 @@ import {v1} from "uuid";
 import AddItemForm from "./AddItemForm";
 import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from "@material-ui/core";
 import {Menu} from "@material-ui/icons";
-import {
-    AddTodilistAC,
-
-} from "./state/taskReducer";
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootStateType} from "./state/store";
-import {setTodolist, TypeTodolistReducer} from "./state/todolistReducer";
-import GetApi from "./dall/todolists-api";
+import {addTodolistTC, getTodolistsTC, TypeTodolistReducer} from "./state/todolistReducer";
 
 export type TypeFilter = 'all'|'active'|'completed';
 
@@ -23,16 +18,14 @@ export const todolistID2 = v1();
 
     const todolists = useSelector<AppRootStateType, Array<TypeTodolistReducer>>(state => state.todolists)
     const dispatch = useDispatch()
-    const addToDoList= useCallback( (todolistTitle: string)=> {
-        dispatch(AddTodilistAC(todolistTitle))
-    },[dispatch])
-     useEffect(()=>{
-        async  function test(){
-            let result = await  GetApi.getTodoLists()
-            dispatch(setTodolist(result))
-        }
-        test()
 
+    const addToDoList= useCallback( (todolistTitle: string)=> {
+        dispatch(addTodolistTC(todolistTitle))
+    },[dispatch])
+
+
+     useEffect(()=>{
+        dispatch(getTodolistsTC())
      },[dispatch])
     return (
         <div>

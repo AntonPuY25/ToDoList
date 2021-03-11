@@ -1,12 +1,13 @@
-import {v1} from "uuid";
 import {TypeFilter} from "../AppWithRedux";
-import {TypeTodolist} from "../dall/todolists-api";
+import GetApi, {TypeTodolist} from "../dall/todolists-api";
+import {ThunkAction} from "redux-thunk";
+import {AppRootStateType} from "./store";
 
 export const RemoveTodolistAC = (todolistId: string): TypeRemoveTodolistAction => {
     return {type: 'REMOVE-TODOLIST', id: todolistId}
 }
-export const AddTodilistAC = (title: string): TypeAddTodolistAction => {
-    return {type: 'ADD-TODOLIST', title, todoListId: v1()}
+export const AddTodilistAC = (todolist:TypeTodolist): TypeAddTodolistAction => {
+    return {type: 'ADD-TODOLIST', todolist}
 }
 
 
@@ -37,8 +38,7 @@ export type TypeRemoveTodolistAction = {
 }
 export type TypeAddTodolistAction = {
     type: 'ADD-TODOLIST'
-    title: string
-    todoListId: string
+    todolist:TypeTodolist
 }
 type TypeChangeTodoolistAction = {
     type: "CHANGE_TODOLIST_TITLE"
@@ -65,15 +65,10 @@ export function TodolistReducer(state: Array<TypeTodolistReducer> = initialState
             return state.filter(tl => tl.id !== action.id)
         case 'ADD-TODOLIST':
 
-            const newToDolist:TypeTodolistReducer  = {
-                id: action.todoListId,
-                title: action.title,
-                addedDate: "",
-                order: 1,
-                filter:'all',
-            }
+            const newTodolist:any  = action.todolist
+            newTodolist.filter = 'all'
             return [
-                ...state, newToDolist
+                newTodolist, ...state
             ]
         case "CHANGE_TODOLIST_TITLE":
             return state.map((tl) => {
@@ -108,3 +103,24 @@ export function TodolistReducer(state: Array<TypeTodolistReducer> = initialState
 
 
 }
+
+export const getTodolistsTC = ():ThunkAction<void, AppRootStateType, unknown, ActionType>=>
+    async (dispatch)=>{
+        let result = await  GetApi.getTodoLists()
+        dispatch(setTodolist(result))
+}
+export const addTodolistTC = (title: string):ThunkAction<void, AppRootStateType, unknown, ActionType>=>
+    async (dispatch)=>{
+        let result= await  GetApi.setTodolist(title)
+        dispatch(AddTodilistAC(result.data.data.item))
+    }
+export const removeTodolistTC = (todolistId: string):ThunkAction<void, AppRootStateType, unknown, ActionType>=>
+    async (dispatch)=>{
+        await  GetApi.removeTodolist(todolistId)
+        dispatch(RemoveTodolistAC(todolistId))
+    }
+export const updateTodolistTC = (todolistId: string,title:string):ThunkAction<void, AppRootStateType, unknown, ActionType>=>
+    async (dispatch)=>{
+       await  GetApi.updateTodolist(todolistId,title)
+        dispatch(ChangeToddolistAC(todolistId,title))
+    }
