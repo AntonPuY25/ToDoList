@@ -6,7 +6,7 @@ import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import s from './todolist.module.css'
 import {useDispatch, useSelector} from "react-redux";
 import {changeTodolistFilterAC, removeTodolistTC, updateTodolistTC} from "../state/todolistReducer";
-import {addTaskAC, getTaskTC, TypeTaskReducer} from "../state/taskReducer";
+import {addTaskTC, getTaskTC, TypeTaskReducer} from "../state/taskReducer";
 import {AppRootStateType} from "../state/store";
 import Task from "../Tasks/tasks";
 import {TypeStatusTask, TypeTaskItems} from "../dall/todolists-api";
@@ -48,7 +48,7 @@ export const ToDoList = React.memo( (props: PropsType) => {
 
     },[dispatch,props.id])
     const addTask = useCallback((title: string) => {
-        dispatch(addTaskAC(title, props.id))
+        dispatch(addTaskTC(props.id,title))
     },[dispatch,props.id])
     const changeTodotitle = useCallback((title: string) => {
         dispatch(updateTodolistTC(props.id, title))

@@ -1,5 +1,4 @@
-import React, {ChangeEvent} from 'react';
-import {useEffect, useState} from "react";
+import React, {ChangeEvent, useEffect, useState} from 'react';
 import GetApi from "../dall/todolists-api";
 import {Meta, Story} from "@storybook/react/types-6-0";
 
@@ -182,7 +181,7 @@ const UpdateTask = () => {
     const [TaskTitle, setTaskTitle] = useState<string>("")
         const changeTask = ()=>{
             GetApi.updateTask(TodolistId,
-                TaskId, TaskTitle)
+                TaskId, {}as any)
                 .then(res => setState(res.data.data.item))
         }
 
