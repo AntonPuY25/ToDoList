@@ -176,7 +176,6 @@ export const updateTask1TC = (todoListId: string, taskId: string, status: TypeSt
                 startDate: task.startDate,
                 deadline: task.deadline,
 
-
             }
             let result = await GetApi.updateTask(task.todoListId, task.id, model)
             dispatch(changeTaskAC(result.data.data.item))
