@@ -1,4 +1,4 @@
-import {todolistID1, todolistID2} from "../AppWithRedux";
+import {todolistID1, todolistID2} from "../app/AppWithRedux";
 import {TypeTaskReducer} from "../state/taskReducer";
 import {PriorityType, TypeStatusTask, TypeTaskItems} from "../dall/todolists-api";
 

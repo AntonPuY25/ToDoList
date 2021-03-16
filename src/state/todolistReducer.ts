@@ -1,4 +1,4 @@
-import {TypeFilter} from "../AppWithRedux";
+import {TypeFilter} from "../app/AppWithRedux";
 import GetApi, {TypeTodolist} from "../dall/todolists-api";
 import {ThunkAction} from "redux-thunk";
 import {AppRootStateType} from "./store";
@@ -124,3 +124,4 @@ export const updateTodolistTC = (todolistId: string,title:string):ThunkAction<vo
        await  GetApi.updateTodolist(todolistId,title)
         dispatch(ChangeToddolistAC(todolistId,title))
     }
+

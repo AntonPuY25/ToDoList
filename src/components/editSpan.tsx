@@ -1,6 +1,6 @@
 import React, {ChangeEvent, useState} from "react";
 import {TextField} from "@material-ui/core";
-import {TypeStatusTask} from "./dall/todolists-api";
+import {TypeStatusTask} from "../dall/todolists-api";
 
 export type TypeEditSpan={
     title:string

@@ -1,7 +1,7 @@
 import React, {ChangeEvent, useCallback} from 'react';
 import { removeTaskTC, updateTask1TC, updateTaskTC} from "../state/taskReducer";
 import {Checkbox, IconButton} from "@material-ui/core";
-import EditSpan from "../editSpan";
+import EditSpan from "../components/editSpan";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 import {useDispatch} from "react-redux";
 import {TypeTaskItems} from "../dall/todolists-api";

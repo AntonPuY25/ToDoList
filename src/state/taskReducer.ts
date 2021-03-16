@@ -3,65 +3,36 @@ import GetApi, {PropertiesType, TypeStatusTask, TypeTaskItems, TypeTodolist} fro
 import {ThunkAction} from "redux-thunk";
 import {AppRootStateType} from "./store";
 
-export const removeTaskAC = (taskId: string, todoListId: string): TypeAction1 => {
-    return {type: 'REMOVE-TASK', taskId, todoListId}
+export const removeTaskAC = (taskId: string, todoListId: string) => {
+    return {type: 'REMOVE-TASK', taskId, todoListId} as const
 }
-export const addTaskAC = (task: TypeTaskItems): TypetAction2 => {
-    return {type: 'ADD-TASK', task}
+export const addTaskAC = (task: TypeTaskItems) => {
+    return {type: 'ADD-TASK', task}  as const
 }
-export const changeTaskAC = (task: TypeTaskItems): TypetAction3 => {
-    return {type: 'CHANGE_TASK', task}
+export const changeTaskAC = (task: TypeTaskItems) => {
+    return {type: 'CHANGE_TASK', task}  as const
 }
-
-export const AddTodilistAC = (todolist: TypeTodolist): TypeAddTodolistAction => {
-    return {type: 'ADD-TODOLIST', todolist,}
+export const AddTodilistAC = (todolist: TypeTodolist) => {
+    return {type: 'ADD-TODOLIST', todolist,}  as const
 }
-export const RemoveTodolistAC = (todoListId: string): TypeRemoveTodolistAction => {
-    return {type: 'REMOVE-TODOLIST', id: todoListId}
+export const RemoveTodolistAC = (todoListId: string) => {
+    return {type: 'REMOVE-TODOLIST', id: todoListId}  as const
 }
 export const getTasksAC = (todoListId: string, tasks: Array<TypeTaskItems>) => {
     return {type: 'GET-TASKS', todoListId, tasks} as const
 }
-type TypeActionGetTasks = ReturnType<typeof getTasksAC>
-type TypeAction1 = {
-    type: 'REMOVE-TASK'
-    taskId: string
-    todoListId: string
-}
-export type TypetAction2 = {
-    type: 'ADD-TASK'
-    task: TypeTaskItems
-}
-type TypetAction3 = {
-    type: 'CHANGE_TASK'
-    task: TypeTaskItems
-}
-
-export type TypeTaskReducer = {
-    [key: string]: TypeTaskItems[]
-}
 let initilalState: TypeTaskReducer = {}
-
-export type ActionType =
-    TypeAction1
-    | TypetAction2
-    | TypetAction3
-    | TypeAddTodolistAction
-    | TypeRemoveTodolistAction
-    | TypeSetTodolistAction
-    | TypeActionGetTasks
 
 export function taskReducer(state: TypeTaskReducer = initilalState, action: ActionType): TypeTaskReducer {
     switch (action.type) {
         case 'REMOVE-TASK': {
-            let copyState = {...state}
-            copyState[action.todoListId] = copyState[action.todoListId].filter((task: TypeTaskItems) => task.id !== action.taskId)
-            return copyState
-        }
+            return {...state,
+                [action.todoListId]:[...state[action.todoListId].filter((task: TypeTaskItems) => task.id !== action.taskId)]
+            }}
+
         case 'ADD-TASK': {
             return {
-                ...state,
-                [action.task.todoListId]: [action.task, ...state[action.task.todoListId]]
+                ...state, [action.task.todoListId]: [action.task, ...state[action.task.todoListId]]
             }
 
         }
@@ -89,9 +60,11 @@ export function taskReducer(state: TypeTaskReducer = initilalState, action: Acti
         }
 
         case 'REMOVE-TODOLIST': {
-            let copyState = {...state}
-            delete copyState[action.id]
-            return copyState
+            return {
+               delete :state[action.id],
+                ...state
+
+            }
         }
 
 
@@ -182,3 +155,16 @@ export const updateTask1TC = (todoListId: string, taskId: string, status: TypeSt
         }
 
     }
+
+export type TypeTaskReducer = {
+    [key: string]: TypeTaskItems[]
+}
+
+export type ActionType =
+    | ReturnType<typeof removeTaskAC>
+    | ReturnType<typeof addTaskAC>
+    | ReturnType<typeof changeTaskAC>
+    | TypeAddTodolistAction
+    | TypeRemoveTodolistAction
+    | TypeSetTodolistAction
+    | ReturnType<typeof getTasksAC>

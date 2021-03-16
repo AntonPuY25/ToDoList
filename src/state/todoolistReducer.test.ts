@@ -6,7 +6,7 @@ import {
     RemoveTodolistAC, setTodolist,
     TodolistReducer, TypeTodolistReducer
 } from "./todolistReducer";
-import {TypeFilter} from "../AppWithRedux";
+import {TypeFilter} from "../app/AppWithRedux";
 
 let todolistId1: string;
 let todolistId2: string;

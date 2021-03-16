@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect} from "react";
-import AddItemForm from "../AddItemForm";
-import EditSpan from "../editSpan";
+import AddItemForm from "../components/AddItemForm";
+import EditSpan from "../components/editSpan";
 import {Button, IconButton} from "@material-ui/core";
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import s from './todolist.module.css'
@@ -10,7 +10,7 @@ import {addTaskTC, getTaskTC, TypeTaskReducer} from "../state/taskReducer";
 import {AppRootStateType} from "../state/store";
 import Task from "../Tasks/tasks";
 import {TypeStatusTask, TypeTaskItems} from "../dall/todolists-api";
-import {TypeFilter} from "../AppWithRedux";
+import {TypeFilter} from "../app/AppWithRedux";
 
 type PropsType = {
     title: string
