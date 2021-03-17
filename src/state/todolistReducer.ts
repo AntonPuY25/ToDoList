@@ -2,6 +2,7 @@ import {TypeFilter} from "../app/AppWithRedux";
 import GetApi, {TypeTodolist} from "../dall/todolists-api";
 import {ThunkAction} from "redux-thunk";
 import {AppRootStateType} from "./store";
+import {setErrorAC, setStatusAC, TypeSetErrorAction, TypeSetStatusAction} from "../app/appReducer";
 
 export const RemoveTodolistAC = (todolistId: string): TypeRemoveTodolistAction => {
     return {type: 'REMOVE-TODOLIST', id: todolistId}
@@ -104,15 +105,29 @@ export function TodolistReducer(state: Array<TypeTodolistReducer> = initialState
 
 }
 
-export const getTodolistsTC = ():ThunkAction<void, AppRootStateType, unknown, ActionType>=>
+export const getTodolistsTC = ():ThunkAction<void, AppRootStateType, unknown, ActionType|TypeSetStatusAction>=>
     async (dispatch)=>{
+        dispatch(setStatusAC("loading"))
         let result = await  GetApi.getTodoLists()
         dispatch(setTodolist(result))
-}
-export const addTodolistTC = (title: string):ThunkAction<void, AppRootStateType, unknown, ActionType>=>
+        dispatch(setStatusAC("successed"))
+
+    }
+export const addTodolistTC = (title: string):ThunkAction<void, AppRootStateType, unknown,
+    ActionType|TypeSetErrorAction>=>
     async (dispatch)=>{
+    try{
         let result= await  GetApi.setTodolist(title)
-        dispatch(AddTodilistAC(result.data.data.item))
+        if(result.data.resultCode===0){
+            dispatch(AddTodilistAC(result.data.data.item))
+
+        }else{
+            throw new Error(result.data.messages[0])
+        }
+    }catch (e) {
+        dispatch(setErrorAC(e.toString()))
+    }
+
     }
 export const removeTodolistTC = (todolistId: string):ThunkAction<void, AppRootStateType, unknown, ActionType>=>
     async (dispatch)=>{

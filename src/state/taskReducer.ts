@@ -2,6 +2,7 @@ import {TypeAddTodolistAction, TypeRemoveTodolistAction, TypeSetTodolistAction} 
 import GetApi, {PropertiesType, TypeStatusTask, TypeTaskItems, TypeTodolist} from "../dall/todolists-api";
 import {ThunkAction} from "redux-thunk";
 import {AppRootStateType} from "./store";
+import {setErrorAC, setStatusAC, TypeSetErrorAction, TypeSetStatusAction} from "../app/appReducer";
 
 export const removeTaskAC = (taskId: string, todoListId: string) => {
     return {type: 'REMOVE-TASK', taskId, todoListId} as const
@@ -87,19 +88,33 @@ export function taskReducer(state: TypeTaskReducer = initilalState, action: Acti
     }
 }
 
-export const getTaskTC = (todoListId: string): ThunkAction<void, AppRootStateType, unknown, ActionType> =>
+export const getTaskTC = (todoListId: string): ThunkAction<void, AppRootStateType, unknown,
+    ActionType|TypeSetStatusAction> =>
     async (dispatch) => {
+        dispatch(setStatusAC("loading"))
         let result = await GetApi.getTasks(todoListId)
         dispatch(getTasksAC(todoListId, result.data.items))
-    }
-
-
-export const addTaskTC = (todoListId: string, title: string): ThunkAction<void, AppRootStateType, unknown, ActionType> =>
-    async (dispatch) => {
-        let task = await GetApi.createTask(todoListId, title)
-        dispatch(addTaskAC(task.data.data.item))
+        dispatch(setStatusAC("successed"))
 
     }
+
+
+export const addTaskTC = (todoListId: string, title: string): ThunkAction<void,
+    AppRootStateType, unknown, ActionType|TypeSetErrorAction> =>
+     async (dispatch) => {
+         try {
+             let task = await  GetApi.createTask(todoListId,title)
+             if(task.data.resultCode===0){
+               dispatch(addTaskAC(task.data.data.item))
+            }else {
+               throw new Error(task.data.messages[0])
+             }
+         }catch (e) {
+             dispatch(setErrorAC(e.toString()))
+         }
+
+
+  }
 
 export const removeTaskTC = (todoListId: string, taskId: string): ThunkAction<void, AppRootStateType, unknown, ActionType> =>
     (dispatch) => {
@@ -168,3 +183,4 @@ export type ActionType =
     | TypeRemoveTodolistAction
     | TypeSetTodolistAction
     | ReturnType<typeof getTasksAC>
+
