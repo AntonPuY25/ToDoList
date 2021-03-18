@@ -12,9 +12,7 @@ const Todolists = () => {
         {todolists.map((newToDoList: TypeTodolistReducer) => {
             return <Grid style={{padding: '10px'}} key={newToDoList.id} item xs={3}>
                 <Paper elevation={5} style={{padding: '10px'}}>
-                    <ToDoList id={newToDoList.id}
-                              title={newToDoList.title}
-                              filter={newToDoList.filter}/>
+                    <ToDoList todolist={newToDoList} />
 
 
                 </Paper>
