@@ -5,6 +5,7 @@ import {TextField} from "@material-ui/core";
 
 export type TypeAddItemProps = {
     addItems: (title: string) => void
+    disabledButton?: boolean
 }
 
 const AddItemForm = React.memo((props: TypeAddItemProps) =>{
@@ -43,7 +44,7 @@ const AddItemForm = React.memo((props: TypeAddItemProps) =>{
             />
 
 
-            <Button color={"primary"} variant={"contained"} size={"small"} onClick={addItem}>+</Button>
+            <Button disabled={props.disabledButton} color={"primary"} variant={"contained"} size={"small"} onClick={addItem}>+</Button>
         </div>
     </div>
 })

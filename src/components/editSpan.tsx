@@ -27,8 +27,8 @@ const EditSpan = React.memo((props:TypeEditSpan)=>{
     }
     return(
 
-        editMode?<TextField value={text}  size={"small"} onChange={changeText} autoFocus onBlur={ofEditMode}/>
-        : <span onDoubleClick={onEditMode} className={(props.status===TypeStatusTask.Completed) ? 'is-done' : ""}>{props.title}</span>
+        editMode?<TextField value={text} size={"small"} onChange={changeText} autoFocus onBlur={ofEditMode}/>
+        : <span  onDoubleClick={onEditMode} className={(props.status===TypeStatusTask.Completed) ? 'is-done' : ""}>{props.title}</span>
 
     )
 })

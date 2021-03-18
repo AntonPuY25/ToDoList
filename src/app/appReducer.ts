@@ -39,7 +39,7 @@ type TypeInitialSate = {
     status:TypeStatus
     error:string|null
 }
-export type TypeStatus = 'free'|'loading'|'error'|'successed';
+export type TypeStatus = 'free'|'loading'|'error'|'succeeded';
 export default AppReducer;
 
 

@@ -6,7 +6,7 @@ export const functionErrorApi =
     (data:any,todolistId:string, dispatch:Dispatch)=>{
         if (data.resultCode === 0) {
             dispatch(RemoveTodolistAC(todolistId))
-            dispatch(setStatusAC('successed'))
+            dispatch(setStatusAC('succeeded'))
             dispatch(setStatsuDesabled(todolistId,false))
         } else {
             dispatch(setStatusAC('error'))

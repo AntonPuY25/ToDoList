@@ -25,6 +25,7 @@ const Template: Story<TypePropsTask> = (args) =>{
             id: v1(),
             todoListId: 'todolist2',
             order: 2,
+            disabledStatus:false,
             addedDate:"",}} todolistId={'todolistID1'}/>
 
     </>

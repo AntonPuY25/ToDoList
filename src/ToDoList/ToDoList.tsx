@@ -63,11 +63,12 @@ export const ToDoList:React.FC<PropsType> = React.memo( ({todolist}) => {
             <h3 className={s.test} style={{textAlign: 'center'}}>
                 <EditSpan
                     title={todolist.title}
-                    changeTaskTitle={changeTodotitle}/>
+                    changeTaskTitle={changeTodotitle}
+                />
 
             </h3>
 
-            <AddItemForm addItems={addTask}/>
+            <AddItemForm addItems={addTask} disabledButton={todolist.disabledStatus}/>
 
             {resultTask.map((i: TypeTaskItems) => {
               return  <Task todolistId={todolist.id} task={i}

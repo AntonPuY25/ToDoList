@@ -49,7 +49,7 @@ export type TypeTaskItems = {
     todoListId: string
     order: number
     addedDate: string
-}
+}&{disabledStatus:boolean}
 export type TypeResponseTask = {
     items: Array<TypeTaskItems>
     totalCount: number

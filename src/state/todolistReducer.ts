@@ -94,21 +94,27 @@ export const getTodolistsTC = (): ThunkAction<void, AppRootStateType, unknown, A
         dispatch(setStatusAC("loading"))
         let result = await GetApi.getTodoLists()
         dispatch(setTodolist(result))
-        dispatch(setStatusAC("successed"))
+        dispatch(setStatusAC("succeeded"))
 
     }
 export const addTodolistTC = (title: string): ThunkAction<void, AppRootStateType, unknown,
-    ActionType | TypeSetErrorAction> =>
+    ActionType | TypeSetErrorAction|TypeSetStatusAction> =>
     async (dispatch) => {
         try {
+            dispatch(setStatusAC("loading"))
             let result = await GetApi.setTodolist(title)
             if (result.data.resultCode === 0) {
                 dispatch(AddTodilistAC(result.data.data.item))
+                dispatch(setStatusAC("succeeded"))
 
             } else {
+                dispatch(setStatusAC("error"))
                 throw new Error(result.data.messages[0])
+
+
             }
         } catch (e) {
+            dispatch(setStatusAC("error"))
             dispatch(setErrorAC(e.toString()))
         }
 
@@ -127,10 +133,24 @@ export const removeTodolistTC = (todolistId: string): ThunkAction<void, AppRootS
         }
 
     }
-export const updateTodolistTC = (todolistId: string, title: string): ThunkAction<void, AppRootStateType, unknown, ActionType> =>
+export const updateTodolistTC = (todolistId: string, title: string): ThunkAction<void,
+    AppRootStateType, unknown, ActionType|TypeSetErrorAction|TypeSetStatusAction> =>
     async (dispatch) => {
-        await GetApi.updateTodolist(todolistId, title)
-        dispatch(ChangeToddolistAC(todolistId, title))
+        try{
+            dispatch(setStatusAC('loading'))
+            let result = await GetApi.updateTodolist(todolistId, title)
+          if(result.data.resultCode===0){
+              dispatch(setStatusAC("succeeded"))
+              dispatch(ChangeToddolistAC(todolistId, title))
+          }else{
+              dispatch(setStatusAC("error"))
+              throw new Error(result.data.messages[0])
+          }
+        }catch (e) {
+            dispatch(setStatusAC("error"))
+            dispatch(setErrorAC(e.toString()))
+
+        }
     }
 
 export type TypeSetTodolistAction = ReturnType<typeof setTodolist>
