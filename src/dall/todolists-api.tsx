@@ -64,7 +64,30 @@ export type PropertiesType = {
     startDate: string
     deadline: string
 }
+type TypeIsAuth = {
+        id: number
+        email:string
+        login: string
+}
 
+export const getIsAuth = {
+    login:(email: string,password:string,rememberMe:boolean)=>{
+        return instance.post<TypeResponseDeleteAndUpdate<{userId: number}>>('/auth/login',{email,password,rememberMe}).then(response => {
+            return  response.data
+        })
+    },
+    getInitialApp :()=>{
+        return instance.get<TypeResponseDeleteAndUpdate<TypeIsAuth>>('/auth/me').then(response=>{
+            return  response.data
+        })
+    },
+    logout :()=>{
+        return instance.delete<TypeResponseDeleteAndUpdate>('/auth/login').then(response => {
+            return response.data
+        })
+
+    }
+}
 const GetApi = {
     getTodoLists: () => {
         return instance.get<Array<TypeTodolist>>('todo-lists').then(response => {

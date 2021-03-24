@@ -13,7 +13,7 @@ export type TypePropsTask = {
 }
 const Task =  React.memo((props:TypePropsTask)=>{
     const dispatch = useDispatch()
-    debugger
+
     const removeTask = useCallback( () => {
         dispatch(removeTaskTC(props.todolistId,props.task.id))
 

@@ -21,6 +21,7 @@ type PropsType = {
 }
 
 export const ToDoList:React.FC<PropsType> = React.memo( ({todolist}) => {
+    debugger
     const tasks = useSelector<AppRootStateType, TypeTaskReducer>(state => state.tasks)
     const dispatch = useDispatch()
     useEffect(()=>{
@@ -53,6 +54,8 @@ export const ToDoList:React.FC<PropsType> = React.memo( ({todolist}) => {
     const changeTodotitle = useCallback((title: string) => {
         dispatch(updateTodolistTC(todolist.id, title))
     },[dispatch,todolist.id])
+
+
     return (<div>
         <div>
 
