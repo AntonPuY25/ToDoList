@@ -23,10 +23,12 @@ type PropsType = {
 export const ToDoList:React.FC<PropsType> = React.memo( ({todolist}) => {
     debugger
     const tasks = useSelector<AppRootStateType, TypeTaskReducer>(state => state.tasks)
+    const isAuth = useSelector<AppRootStateType, boolean>(state => state.login.isAuth)
+
     const dispatch = useDispatch()
     useEffect(()=>{
         dispatch(getTaskTC(todolist.id))
-    },[dispatch,todolist.id])
+    },[dispatch,todolist.id,isAuth])
     let resultTask = tasks[todolist.id];
 
     if (todolist.filter === "active") {

@@ -39,7 +39,7 @@ const AppWithRedux = React.memo(() => {
     useEffect(() => {
         dispatch(isInitialTC())
         dispatch(getTodolistsTC())
-    }, [dispatch])
+    }, [dispatch,isAuth])
 
     if(!isInitial){
         return<div style={{position:'fixed',top:'50%' ,textAlign:'center',width:'100%'}}>
