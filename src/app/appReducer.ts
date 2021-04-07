@@ -1,80 +1,61 @@
 import {Dispatch} from "redux";
 import {getIsAuth} from "../dall/todolists-api";
-import {setIsAuthAC, TypeGetIsAuth} from "../state/login";
+import {setIsAuthAC} from "../state/loginReducer";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
-const initialState:TypeInitialSate = {
-    status:"free",
-    error:null,
-    isInitial:false
+const initialState: TypeInitialSate = {
+    status: "free",
+    error: null,
+    isInitial: false
 
 
 }
+const slice = createSlice({
+    name: 'app',
+    initialState: initialState,
+    reducers: {
+        setStatusAC(state, action: PayloadAction<{ status: TypeStatus }>) {
+            state.status = action.payload.status
+        },
+        setErrorAC(state, action: PayloadAction<{ error: string | null }>) {
+            state.error = action.payload.error
+        },
+        setIsInitialAC(state, action: PayloadAction<{ isInitial: boolean }>) {
+            state.isInitial = action.payload.isInitial
 
-const AppReducer=(state:TypeInitialSate=initialState,action:TypeActions):TypeInitialSate=>{
+        },
+    }
 
-        switch(action.type){
-            case "appReducer/SET_ERROR":{
-                return{
-                    ...state,
-                    error:action.error
-                }
-            }
-            case "appReducer/SET_STATUS":{
-                return{
-                    ...state,
-                    status:action.status
-                }
-            }
-            case "appReducer/SET_IS_INITIAL":{
-                return {
-                    ...state,
-                    isInitial:action.isInitial
-                }
-            }
+})
 
-            default:return state
-
+const AppReducer = slice.reducer;
+export const {setStatusAC,setErrorAC,setIsInitialAC} = slice.actions;
+export const isInitialTC = () => async (dispatch: Dispatch) => {
+    try {
+        dispatch(setStatusAC({status:'loading'}))
+        let result = await getIsAuth.getInitialApp()
+        if (result.resultCode === 0) {
+            dispatch(setStatusAC({status:'succeeded'}))
+            dispatch(setIsAuthAC({isAuth: true}))
+        } else {
+            dispatch(setStatusAC({status:'error'}))
+            dispatch(setErrorAC({error:result.messages[0]}))
         }
+        dispatch(setIsInitialAC({isInitial:true}))
+    } catch (e) {
+        dispatch(setStatusAC({status:'error'}))
+        dispatch(setErrorAC(e.toString()))
+        dispatch(setIsInitialAC({isInitial:true}))
 
+    }
 }
 
-
-export const setStatusAC = (status:TypeStatus)=>({type:'appReducer/SET_STATUS',status} as const)
-export const setErrorAC = (error:string|null)=>({type:'appReducer/SET_ERROR',error} as const)
-export const setIsInitialAC = (isInitial:boolean)=>({type:'appReducer/SET_IS_INITIAL',isInitial} as const)
-
-export const isInitialTC = ()=> async (dispatch:Dispatch<TypeActions|TypeGetIsAuth>)=>{
-            try{
-                dispatch(setStatusAC('loading'))
-                let result = await getIsAuth.getInitialApp()
-                if(result.resultCode===0){
-                    dispatch(setStatusAC('succeeded'))
-                    dispatch(setIsAuthAC(true))
-                }else{
-                    dispatch(setStatusAC('error'))
-                    dispatch(setErrorAC(result.messages[0]))
-                }
-                dispatch(setIsInitialAC(true))
-            }catch (e) {
-                dispatch(setStatusAC('error'))
-                dispatch(setErrorAC(e.toString()))
-                dispatch(setIsInitialAC(true))
-
-            }
-}
-
-export type TypeSetStatusAction = ReturnType<typeof setStatusAC>
-export type TypeSetErrorAction = ReturnType<typeof setErrorAC>
-type TypeActions =
-    |TypeSetErrorAction
-    |TypeSetStatusAction
-    |ReturnType<typeof setIsInitialAC>
 type TypeInitialSate = {
-    status:TypeStatus
-    error:string|null
-    isInitial:boolean
+    status: TypeStatus
+    error: string | null
+    isInitial: boolean
 }
-export type TypeStatus = 'free'|'loading'|'error'|'succeeded';
+export type TypeStatus = 'free' | 'loading' | 'error' | 'succeeded';
 export default AppReducer;
 
 

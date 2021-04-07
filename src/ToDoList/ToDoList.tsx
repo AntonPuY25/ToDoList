@@ -6,7 +6,6 @@ import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import s from './todolist.module.css'
 import {useDispatch, useSelector} from "react-redux";
 import {
-    changeTodolistFilterAC,
     removeTodolistTC,
     TypeTodolistReducer,
     updateTodolistTC
@@ -15,22 +14,27 @@ import {addTaskTC, getTaskTC, TypeTaskReducer} from "../state/taskReducer";
 import {AppRootStateType} from "../state/store";
 import Task from "../Tasks/tasks";
 import {TypeStatusTask, TypeTaskItems} from "../dall/todolists-api";
+import {changeTodolistFilterAC,} from "../state/todolistReducer";
 
 type PropsType = {
     todolist:TypeTodolistReducer
 }
 
 export const ToDoList:React.FC<PropsType> = React.memo( ({todolist}) => {
-    debugger
+
     const tasks = useSelector<AppRootStateType, TypeTaskReducer>(state => state.tasks)
+
     const isAuth = useSelector<AppRootStateType, boolean>(state => state.login.isAuth)
 
     const dispatch = useDispatch()
     useEffect(()=>{
         dispatch(getTaskTC(todolist.id))
-    },[dispatch,todolist.id,isAuth])
-    let resultTask = tasks[todolist.id];
 
+    },[dispatch,todolist.id,isAuth])
+
+
+    let resultTask = tasks[todolist.id];
+debugger
     if (todolist.filter === "active") {
 
         resultTask = tasks[todolist.id].filter((t:TypeTaskItems) => t.status === TypeStatusTask.New)
@@ -40,14 +44,14 @@ export const ToDoList:React.FC<PropsType> = React.memo( ({todolist}) => {
     }
 
     const onAllKeyHandler = useCallback(() => {
-        dispatch(changeTodolistFilterAC(todolist.id, 'all'))
+        dispatch(changeTodolistFilterAC({id:todolist.id,filter:"all"}))
     },[dispatch,todolist.id])
     const onActiveKeyHandler = useCallback(() => {
-        dispatch(changeTodolistFilterAC(todolist.id, 'active'))
+        dispatch(changeTodolistFilterAC({id:todolist.id,filter:"active"}))
 
     },[dispatch,todolist.id])
     const onCompletedKeyHandler = useCallback(() => {
-        dispatch(changeTodolistFilterAC(todolist.id, 'completed'))
+        dispatch(changeTodolistFilterAC({id:todolist.id,filter:"completed"}))
 
     },[dispatch,todolist.id])
     const addTask = useCallback((title: string) => {
@@ -76,6 +80,7 @@ export const ToDoList:React.FC<PropsType> = React.memo( ({todolist}) => {
             <AddItemForm addItems={addTask} disabledButton={todolist.disabledStatus}/>
 
             {resultTask.map((i: TypeTaskItems) => {
+
               return  <Task todolistId={todolist.id} task={i}
                              key={i.id}  />
             })}

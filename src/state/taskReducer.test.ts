@@ -6,7 +6,7 @@ import {
     taskReducer,
     TypeTaskReducer
 } from "./taskReducer";
-import {AddTodilistAC, RemoveTodolistAC} from "./todolistReducer";
+import {AddTodolistAC, RemoveTodolistAC} from "./todolistReducer";
 import {PriorityType, TypeStatusTask} from "../dall/todolists-api";
 
 let startState: TypeTaskReducer;
@@ -198,7 +198,7 @@ test('status of specified task should be changed', () => {
 test('new array should be added when new todolist is added', () => {
 
 
-    const action = AddTodilistAC("new todolist");
+    const action = AddTodolistAC("new todolist");
 
     const endState = taskReducer(startState, action)
 

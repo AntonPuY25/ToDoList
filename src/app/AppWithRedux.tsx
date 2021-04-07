@@ -21,7 +21,7 @@ import {AppRootStateType} from "../state/store";
 import {isInitialTC, TypeStatus} from "./appReducer";
 import {Login} from "../login/login";
 import {Redirect, Route} from 'react-router-dom';
-import {logoutTC} from "../state/login";
+import {logoutTC} from "../state/loginReducer";
 
 export type TypeFilter = 'all' | 'active' | 'completed';
 
@@ -39,6 +39,7 @@ const AppWithRedux = React.memo(() => {
     useEffect(() => {
         dispatch(isInitialTC())
         dispatch(getTodolistsTC())
+
     }, [dispatch,isAuth])
 
     if(!isInitial){
@@ -68,8 +69,9 @@ const AppWithRedux = React.memo(() => {
                 <Grid container> <AddItemForm addItems={addToDoList}/></Grid>
                 <Grid container>
                     {!isAuth?<Redirect to={'/login'}/>: <Todolists/>}
-                    <Route exact path={'/'} render={()=><AppWithRedux/>}/>
+                    <Route  exact path={'/'} render={()=><AppWithRedux/>}/>
                     <Route  path={'/login'} render={()=><Login/>}/>
+
                 </Grid>
                 <CustomizedSnackbars/>
 

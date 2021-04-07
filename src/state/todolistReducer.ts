@@ -1,183 +1,141 @@
 import {TypeFilter} from "../app/AppWithRedux";
 import GetApi, {TypeTodolist} from "../dall/todolists-api";
-import {ThunkAction} from "redux-thunk";
-import {AppRootStateType} from "./store";
-import {setErrorAC, setStatusAC, TypeSetErrorAction, TypeSetStatusAction} from "../app/appReducer";
+import {setErrorAC, setStatusAC} from "../app/appReducer";
 import {functionErrorApi, functionErrorNetwork} from "../components/functionErrorApi";
-
-export const RemoveTodolistAC = (todolistId: string): TypeRemoveTodolistAction => {
-    return {type: 'REMOVE-TODOLIST', id: todolistId}
-}
-export const AddTodilistAC = (todolist: TypeTodolist): TypeAddTodolistAction => {
-    return {type: 'ADD-TODOLIST', todolist}
-}
-export const ChangeToddolistAC = (id: string, title: string): TypeChangeTodoolistAction => {
-    return {
-        type: "CHANGE_TODOLIST_TITLE",
-        id,
-        title
-    }
-}
-export const changeTodolistFilterAC = (id: string, filter: TypeFilter): TypeChangeTodoolistFilterAction => {
-    return {
-        type: "CHANGE_TODOLIST_FILTER",
-        id,
-        filter
-    }
-}
-export const setTodolist = (todolists: Array<TypeTodolist>) => {
-    return {
-        type: 'todolist_reducer/SET_TODOLISTS',
-        todolists
-    } as const
-}
-export const setStatsuDesabled = (todolistId: string,disabled:boolean)=>
-    ({type: "/todolistReducer/SET_DISABLED_STATUS",todolistId,disabled} as const)
+import {Dispatch} from "redux";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 let initialState: Array<TypeTodolistReducer> = []
 
+const slice = createSlice({
+    name: 'todolists',
+    initialState,
+    reducers: {
+        RemoveTodolistAC(state, action: PayloadAction<{ todolistId: string }>) {
+            let todolist = state.findIndex(tl => tl.id === action.payload.todolistId)
+            state.splice(todolist, 1)
+        },
+        AddTodolistAC(state, action: PayloadAction<{ todolist: TypeTodolist }>) {
+            let newTodolist: any = action.payload.todolist;
+            newTodolist.filter = 'all';
+            state.unshift(newTodolist)
 
-export function TodolistReducer(state: Array<TypeTodolistReducer> = initialState, action: ActionType): Array<TypeTodolistReducer> {
-    switch (action.type) {
-        case 'REMOVE-TODOLIST':
-            return state.filter(tl => tl.id !== action.id)
-        case 'ADD-TODOLIST':
 
-            const newTodolist: any = action.todolist
-            newTodolist.filter = 'all'
-            return [
-                newTodolist, ...state
-            ]
-        case "CHANGE_TODOLIST_TITLE":
-            return state.map((tl) => {
-                if (tl.id === action.id) {
-                    return {...tl, title: action.title}
+        },
+        ChangeTodolistAC(state, action: PayloadAction<{ todolistId: string, title: string }>) {
+             state.map((td )=> {
+                   if (td.id === action.payload.todolistId) {
+                      td.title = action.payload.title
                 }
-                return tl
-
+                   return td
             })
-        case "CHANGE_TODOLIST_FILTER":
-            return state.map(tl => {
-                if (tl.id === action.id) {
-
-                    return {...tl, filter: action.filter}
+        },
+        changeTodolistFilterAC(state, action: PayloadAction<{ id: string, filter: TypeFilter }>) {
+            state.map(td => {
+                if (td.id === action.payload.id) {
+                    td.filter = action.payload.filter
                 }
-                return tl
-
+                return td
             })
-        case "todolist_reducer/SET_TODOLISTS": {
-            return action.todolists.map(td => {
+        },
+        setTodolist(state, action: PayloadAction<{ todolists: Array<TypeTodolist> }>) {
+
+           return  state = action.payload.todolists.map(td => {
                 return {
                     ...td,
-                    filter: "all",
+                    filter:"all",
                     disabledStatus:false
                 }
-            })
 
-        }
-        case "/todolistReducer/SET_DISABLED_STATUS":
-            return state.map((td)=>{
-                if(td.id===action.todolistId){
-                    return {...td,disabledStatus:action.disabled}
+            });
+        },
+
+        setStatusDisabled(state, action: PayloadAction<{ todolistId: string, disabled: boolean }>) {
+            state.map(td => {
+                    if (td.id === action.payload.todolistId) {
+                        td.disabledStatus = action.payload.disabled
+                    }
+                return td
                 }
-                return  td
-            })
-        default:
-            return state
+            )
+        }
     }
 
 
-}
+})
 
-export const getTodolistsTC = (): ThunkAction<void, AppRootStateType, unknown, ActionType | TypeSetStatusAction> =>
-    async (dispatch) => {
-        dispatch(setStatusAC("loading"))
-        let result = await GetApi.getTodoLists()
-        dispatch(setTodolist(result))
-        dispatch(setStatusAC("succeeded"))
+export const {
+    RemoveTodolistAC,
+    AddTodolistAC,
+    ChangeTodolistAC,
+    changeTodolistFilterAC,
+    setTodolist,
+    setStatusDisabled
+} = slice.actions;
+
+
+export const TodolistReducer = slice.reducer;
+
+
+export const getTodolistsTC = () =>
+    async (dispatch: Dispatch) => {
+        dispatch(setStatusAC({status: 'loading'}))
+        let todolists = await GetApi.getTodoLists()
+        dispatch(setTodolist({todolists}))
+        dispatch(setStatusAC({status: 'succeeded'}))
 
     }
-export const addTodolistTC = (title: string): ThunkAction<void, AppRootStateType, unknown,
-    ActionType | TypeSetErrorAction|TypeSetStatusAction> =>
-    async (dispatch) => {
+export const addTodolistTC = (title: string) =>
+    async (dispatch: Dispatch) => {
         try {
-            dispatch(setStatusAC("loading"))
+            dispatch(setStatusAC({status: 'loading'}))
             let result = await GetApi.setTodolist(title)
             if (result.data.resultCode === 0) {
-                dispatch(AddTodilistAC(result.data.data.item))
-                dispatch(setStatusAC("succeeded"))
+                dispatch(AddTodolistAC({todolist:result.data.data.item}))
+                dispatch(setStatusAC({status: 'succeeded'}))
 
             } else {
-                dispatch(setStatusAC("error"))
+                dispatch(setStatusAC({status: 'error'}))
                 throw new Error(result.data.messages[0])
 
 
             }
         } catch (e) {
-            dispatch(setStatusAC("error"))
+            dispatch(setStatusAC({status: 'error'}))
             dispatch(setErrorAC(e.toString()))
         }
 
     }
-export const removeTodolistTC = (todolistId: string): ThunkAction<void, AppRootStateType,
-    unknown, ActionType | TypeSetErrorAction | TypeSetStatusAction> =>
-    async (dispatch) => {
+export const removeTodolistTC = (todolistId: string) =>
+    async (dispatch: Dispatch) => {
         try {
-            dispatch(setStatusAC('loading'))
-            dispatch(setStatsuDesabled(todolistId,true))
+            dispatch(setStatusAC({status: 'loading'}))
+            dispatch(setStatusDisabled({todolistId,disabled:true}))
             let result = await GetApi.removeTodolist(todolistId)
-            functionErrorApi(result.data,todolistId,dispatch)
+            functionErrorApi(result.data, todolistId, dispatch)
         } catch (e) {
-            functionErrorNetwork(e,dispatch,todolistId)
+            functionErrorNetwork(e, dispatch, todolistId)
 
         }
 
     }
-export const updateTodolistTC = (todolistId: string, title: string): ThunkAction<void,
-    AppRootStateType, unknown, ActionType|TypeSetErrorAction|TypeSetStatusAction> =>
-    async (dispatch) => {
-        try{
-            dispatch(setStatusAC('loading'))
+export const updateTodolistTC = (todolistId: string, title: string) =>
+    async (dispatch: Dispatch) => {
+        try {
+            dispatch(setStatusAC({status: 'loading'}))
             let result = await GetApi.updateTodolist(todolistId, title)
-          if(result.data.resultCode===0){
-              dispatch(setStatusAC("succeeded"))
-              dispatch(ChangeToddolistAC(todolistId, title))
-          }else{
-              dispatch(setStatusAC("error"))
-              throw new Error(result.data.messages[0])
-          }
-        }catch (e) {
-            dispatch(setStatusAC("error"))
+            if (result.data.resultCode === 0) {
+                dispatch(setStatusAC({status: 'succeeded'}))
+                dispatch(ChangeTodolistAC({todolistId,title}))
+            } else {
+                dispatch(setStatusAC({status: 'error'}))
+                throw new Error(result.data.messages[0])
+            }
+        } catch (e) {
+            dispatch(setStatusAC({status: 'error'}))
             dispatch(setErrorAC(e.toString()))
 
         }
     }
 
-export type TypeSetTodolistAction = ReturnType<typeof setTodolist>
-export type TypeRemoveTodolistAction = {
-    type: 'REMOVE-TODOLIST'
-    id: string
-}
-export type TypeAddTodolistAction = {
-    type: 'ADD-TODOLIST'
-    todolist: TypeTodolist
-}
-type TypeChangeTodoolistAction = {
-    type: "CHANGE_TODOLIST_TITLE"
-    id: string
-    title: string
-}
-type TypeChangeTodoolistFilterAction = {
-    type: "CHANGE_TODOLIST_FILTER"
-    id: string
-    filter: TypeFilter
-}
-export type TypeTodolistReducer = TypeTodolist & { filter: TypeFilter,disabledStatus:boolean }
-export type TypeSetDisabledStatusAC = ReturnType<typeof setStatsuDesabled>
-export type ActionType =
-    TypeRemoveTodolistAction
-    | TypeAddTodolistAction
-    | TypeChangeTodoolistAction
-    | TypeChangeTodoolistFilterAction
-    | TypeSetTodolistAction
-    |TypeSetDisabledStatusAC
+export type TypeTodolistReducer = TypeTodolist & { filter: TypeFilter, disabledStatus: boolean }

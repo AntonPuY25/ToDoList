@@ -19,7 +19,7 @@ export default function CustomizedSnackbars() {
             return;
         }
 
-        dispatch(setErrorAC(null))
+        dispatch(setErrorAC({error:null}))
 
     };
 

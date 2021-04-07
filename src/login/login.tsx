@@ -4,7 +4,7 @@ import {useFormik} from "formik";
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootStateType} from "../state/store";
 import {Redirect} from "react-router-dom";
-import {getIsAuthTC} from "../state/login";
+import {getIsAuthTC} from "../state/loginReducer";
 export type TypeFormikError = {
     email:string
     password:string
@@ -23,6 +23,11 @@ export const Login = () => {
            if(!values.password){
                return {
                    password:'Password is required'
+               }
+           }
+           if(values.password.length<3){
+               return{
+                   password:'Must be more 3 characters'
                }
            }
        },
@@ -44,11 +49,11 @@ if(isAuth){
             <form onSubmit={formik.handleSubmit}>
             <FormControl>
                 <FormLabel>
-                    <p>To log in get registered
-                        <a href={'https://social-network.samuraijs.com/'}
-                           target={'_blank'}>here
-                        </a>
-                    </p>
+                    {/*<p>To log in get registered*/}
+                    {/*    <a href={'https://social-network.samuraijs.com/'}*/}
+                    {/*       target={'_blank'}>here*/}
+                    {/*    </a>*/}
+                    {/*</p>*/}
                     <p>or use common test account credentials:</p>
                     <p>Email: free@samuraijs.com</p>
                     <p>Password: free</p>
@@ -59,7 +64,7 @@ if(isAuth){
                         margin="normal"
                         {...formik.getFieldProps('email')}
                     />
-                    {formik.errors.email?<div style={{color:'red'}}>{formik.errors.email}</div>:null}
+                    {formik.touched.email&&formik.errors.email?<div style={{color:'red'}}>{formik.errors.email}</div>:null}
 
                     <TextField
                         type="password"
@@ -68,7 +73,7 @@ if(isAuth){
                         {...formik.getFieldProps('password')}
 
                     />
-                    {formik.errors.password?<div style={{color:'red'}}>{formik.errors.password}</div>:null}
+                    {formik.touched.email&&formik.errors.password?<div style={{color:'red'}}>{formik.errors.password}</div>:null}
 
                     <FormControlLabel
                         label={'Remember me'}
