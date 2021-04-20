@@ -1,15 +1,33 @@
-import {Dispatch} from "redux";
 import {getIsAuth} from "../dall/todolists-api";
+import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {setIsAuthAC} from "../state/loginReducer";
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 const initialState: TypeInitialSate = {
     status: "free",
     error: null,
     isInitial: false
-
-
 }
+
+export const isInitialTC = createAsyncThunk('app/IsInitial', async (arg, thunkAPI) => {
+    try {
+        thunkAPI.dispatch(setStatusAC({status: 'loading'}))
+        let result = await getIsAuth.getInitialApp()
+        if (result.resultCode === 0) {
+            thunkAPI.dispatch(setStatusAC({status: 'succeeded'}))
+            thunkAPI.dispatch(setIsAuthAC({isAuth: true}))
+        } else {
+            thunkAPI.dispatch(setStatusAC({status: 'error'}))
+            thunkAPI.dispatch(setErrorAC({error: result.messages[0]}))
+        }
+        // thunkAPI.dispatch(setIsInitialAC({isInitial:true}))
+        return {isInitial: true}
+    } catch (e) {
+        thunkAPI.dispatch(setStatusAC({status: 'error'}))
+        thunkAPI.dispatch(setErrorAC(e.toString()))
+        return {isInitial: true}
+
+    }
+})
 const slice = createSlice({
     name: 'app',
     initialState: initialState,
@@ -20,35 +38,19 @@ const slice = createSlice({
         setErrorAC(state, action: PayloadAction<{ error: string | null }>) {
             state.error = action.payload.error
         },
-        setIsInitialAC(state, action: PayloadAction<{ isInitial: boolean }>) {
+    },
+    extraReducers: (builder) => {
+        builder.addCase(isInitialTC.fulfilled, (state, action) => {
             state.isInitial = action.payload.isInitial
 
-        },
+        })
     }
 
 })
 
 const AppReducer = slice.reducer;
-export const {setStatusAC,setErrorAC,setIsInitialAC} = slice.actions;
-export const isInitialTC = () => async (dispatch: Dispatch) => {
-    try {
-        dispatch(setStatusAC({status:'loading'}))
-        let result = await getIsAuth.getInitialApp()
-        if (result.resultCode === 0) {
-            dispatch(setStatusAC({status:'succeeded'}))
-            dispatch(setIsAuthAC({isAuth: true}))
-        } else {
-            dispatch(setStatusAC({status:'error'}))
-            dispatch(setErrorAC({error:result.messages[0]}))
-        }
-        dispatch(setIsInitialAC({isInitial:true}))
-    } catch (e) {
-        dispatch(setStatusAC({status:'error'}))
-        dispatch(setErrorAC(e.toString()))
-        dispatch(setIsInitialAC({isInitial:true}))
+export const {setStatusAC, setErrorAC} = slice.actions;
 
-    }
-}
 
 type TypeInitialSate = {
     status: TypeStatus

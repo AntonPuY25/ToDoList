@@ -1,4 +1,3 @@
-import {todolistID1, todolistID2} from "../app/AppWithRedux";
 import {TypeTaskReducer} from "../state/taskReducer";
 import {PriorityType, TypeStatusTask, TypeTaskItems} from "../dall/todolists-api";
 
@@ -8,7 +7,7 @@ let tasks:TypeTaskReducer
 
 beforeEach(()=>{
      tasks={
-        [todolistID1]: [
+        ['todolistID1']: [
             {description: "",
                 title: 'CSS',
                 completed: true,
@@ -19,7 +18,10 @@ beforeEach(()=>{
                 id: '1',
                 todoListId: "todolistId1",
                 order: 1,
-                addedDate:""},
+                addedDate:"",
+                disabledStatus:false
+
+            },
             {description: "",
                 title: 'HTML',
                 completed: true,
@@ -30,7 +32,8 @@ beforeEach(()=>{
                 id: '2',
                 todoListId: "todolistId1",
                 order: 2,
-                addedDate:""},
+                addedDate:"",
+                disabledStatus:false},
             {description: "",
                 title: 'JS',
                 completed: true,
@@ -41,9 +44,10 @@ beforeEach(()=>{
                 id: '3',
                 todoListId: "todolistId1",
                 order: 3,
-                addedDate:""},
+                addedDate:"",
+                disabledStatus:false},
         ],
-        [todolistID2]: [
+        ['todolistID2']: [
             {description: "",
                 title: 'CSS',
                 completed: true,
@@ -54,7 +58,8 @@ beforeEach(()=>{
                 id: '1',
                 todoListId: "todolistId1",
                 order: 1,
-                addedDate:""},
+                addedDate:"",
+                disabledStatus:false},
             {description: "",
                 title: 'HTML',
                 completed: true,
@@ -65,7 +70,8 @@ beforeEach(()=>{
                 id: '2',
                 todoListId: "todolistId1",
                 order: 2,
-                addedDate:""},
+                addedDate:"",
+                disabledStatus:false},
             {description: "",
                 title: 'JS',
                 completed: true,
@@ -76,7 +82,8 @@ beforeEach(()=>{
                 id: '3',
                 todoListId: "todolistId1",
                 order: 3,
-                addedDate:""},
+                addedDate:"",
+                disabledStatus:false},
 
         ]
 
@@ -101,15 +108,16 @@ test('Check addTask ',()=>{
             id: '4',
             todoListId: "todolistId1",
             order: 1,
-            addedDate:""
+            addedDate:"",
+            disabledStatus:false
         }
         tasks[toDoListId] = [newTask, ...tasks[toDoListId]]
     }
-addTask('Hello',todolistID1)
+addTask('Hello','todolistID1')
 
 
-    expect(tasks[todolistID1].length).toBe(4)
-    expect(tasks[todolistID2]).toEqual([
+    expect(tasks['todolistID1'].length).toBe(4)
+    expect(tasks['todolistID2']).toEqual([
         {description: "",
             title: 'CSS',
             completed: true,
@@ -144,8 +152,8 @@ addTask('Hello',todolistID1)
             order: 3,
             addedDate:""},
     ])
-    expect(tasks[todolistID2][0].id).toBe('1')
-    expect(tasks[todolistID1]).toEqual( [
+    expect(tasks['todolistID2'][0].id).toBe('1')
+    expect(tasks['todolistID1']).toEqual( [
         {description: "",
             title: 'Hello',
             completed: true,
@@ -201,11 +209,11 @@ test ("Check deleteTask",()=>{
             return tasks.id !== id
         })
     }
-     deleteTask('1',todolistID1)
+     deleteTask('1','todolistID1')
 
-    expect(tasks[todolistID1].length).toBe(2)
-    expect(tasks[todolistID2].length).toBe(3)
-    expect(tasks[todolistID1][0].title).toBe('HTML')
+    expect(tasks['todolistID1'].length).toBe(2)
+    expect(tasks['todolistID2'].length).toBe(3)
+    expect(tasks['todolistID1'][0].title).toBe('HTML')
 
 })
 test('Check changeStatus',()=>{
@@ -217,9 +225,9 @@ test('Check changeStatus',()=>{
         if (task) {
             task.status =TypeStatusTask.New
         }}
-        changeStatus('1',0,todolistID1)
-        changeStatus('1',0,todolistID2)
-    expect(tasks[todolistID1][0].status).toBe(0)
-    expect(tasks[todolistID2][0].status).toBe(0)
-    expect(tasks[todolistID1][2].status).toBe(0)
+        changeStatus('1',0,'todolistID1')
+        changeStatus('1',0,'todolistID2')
+    expect(tasks['todolistID1'][0].status).toBe(0)
+    expect(tasks['todolistID2'][0].status).toBe(0)
+    expect(tasks['todolistID1'][2].status).toBe(0)
 })

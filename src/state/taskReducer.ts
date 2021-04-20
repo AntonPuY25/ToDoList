@@ -40,7 +40,6 @@ const slice = createSlice({
             })
         },
         getTasksAC(state, action: PayloadAction<{ todoListId: string, tasks: Array<TypeTaskItems> }>) {
-
             state[action.payload.todoListId] = action.payload.tasks
 
         }
