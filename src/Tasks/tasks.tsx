@@ -15,17 +15,15 @@ const Task =  React.memo((props:TypePropsTask)=>{
     const dispatch = useDispatch()
 
     const removeTask = useCallback( () => {
-        dispatch(removeTaskTC(props.todolistId,props.task.id))
+        dispatch(removeTaskTC({todoListId:props.todolistId,taskId:props.task.id}))
 
     },[dispatch,props.task.id,props.todolistId])
     const changeTaskNew = useCallback((title: string) => {
-        dispatch(updateTaskTitleTC(props.todolistId,props.task.id, title))
+        dispatch(updateTaskTitleTC({taskId:props.task.id,title,todoListId:props.todolistId}))
     },[dispatch,props.task.id,props.todolistId])
     const changeStatus = useCallback((e: ChangeEvent<HTMLInputElement>) => {
 
-        dispatch(updateTaskStatusTC(props.todolistId,props.task.id,
-
-            e.currentTarget.checked?2:0, ))
+        dispatch(updateTaskStatusTC({taskId:props.task.id,status:e.currentTarget.checked?2:0,todoListId:props.todolistId} ))
 
     },[dispatch,props.task.id,props.todolistId])
     return <>

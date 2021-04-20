@@ -1,10 +1,8 @@
 import {v1} from "uuid";
 import {
-    AddTodolistAC,
-    ChangeTodolistAC,
-    changeTodolistFilterAC,
-    RemoveTodolistAC, setTodolist,
-    TodolistReducer, TypeTodolistReducer
+    addTodolistTC,
+    changeTodolistFilterAC, getTodolistsTC, removeTodolistTC,
+    TodolistReducer, TypeTodolistReducer, updateTodolistTC
 } from "./todolistReducer";
 import {TypeFilter} from "../app/AppWithRedux";
 
@@ -30,26 +28,28 @@ test('correct filter of todolist should be changed', () => {
     expect(endState[1].filter).toBe(newFilter);
 });
 test('correct todolist should be added', () => {
-    const endState = TodolistReducer(startState, AddTodolistAC({todolist:{id: 'todolistId3', title:newTodolistTitle, addedDate: "", order: 3}}))
+    const paramsAddTodolist = {todolist:{id: 'todolistId3', title:newTodolistTitle, addedDate: "", order: 3}};
+    const endState = TodolistReducer(startState, addTodolistTC.fulfilled(paramsAddTodolist,'paramsId',paramsAddTodolist.todolist.title))
     expect(endState.length).toBe(3);
     expect(endState[0].title).toBe(newTodolistTitle);
 });
 test('correct todolist should change its name', () => {
 
 
-    const endState = TodolistReducer(startState, ChangeTodolistAC({todolistId:todolistId2, title:newTodolistTitle}));
+    const paramsUpdateTodolist = {todolistId:todolistId2, title:newTodolistTitle};
+    const endState = TodolistReducer(startState, updateTodolistTC.fulfilled(paramsUpdateTodolist,'paramsId',paramsUpdateTodolist));
 
     expect(endState[0].title).toBe("What to learn");
     expect(endState[1].title).toBe(newTodolistTitle);
 });
 test('correct todolist should be removed', () => {
-    const endState = TodolistReducer(startState, RemoveTodolistAC({todolistId:todolistId1}))
+    const endState = TodolistReducer(startState, removeTodolistTC.fulfilled({todolistId:todolistId1},'paramsId',todolistId1))
 
     expect(endState.length).toBe(1);
     expect(endState[0].id).toBe(todolistId2);
 });
 test('get Todolists',()=>{
-    const endState = TodolistReducer(startState,setTodolist({todolists:startState}))
+    const endState = TodolistReducer(startState,getTodolistsTC.fulfilled({todolists:startState},'paramsId'))
 
     expect(endState.length).toBe(2);
     expect(endState[0].title).toBe("What to learn")

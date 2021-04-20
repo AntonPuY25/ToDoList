@@ -55,10 +55,10 @@ debugger
 
     },[dispatch,todolist.id])
     const addTask = useCallback((title: string) => {
-        dispatch(addTaskTC(todolist.id,title))
+        dispatch(addTaskTC({todoListId:todolist.id, title}))
     },[dispatch,todolist.id])
     const changeTodotitle = useCallback((title: string) => {
-        dispatch(updateTodolistTC(todolist.id, title))
+        dispatch(updateTodolistTC({todolistId:todolist.id,title}))
     },[dispatch,todolist.id])
 
 

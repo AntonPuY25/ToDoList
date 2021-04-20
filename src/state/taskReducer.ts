@@ -1,159 +1,94 @@
 import GetApi, {PropertiesType, TypeStatusTask, TypeTaskItems} from "../dall/todolists-api";
-import {ThunkAction} from "redux-thunk";
 import {AppRootStateType} from "./store";
 import {setErrorAC, setStatusAC} from "../app/appReducer";
-import {Dispatch} from "redux";
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {AddTodolistAC, RemoveTodolistAC,setTodolist} from "./todolistReducer";
+import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {addTodolistTC, getTodolistsTC, removeTodolistTC} from "./todolistReducer";
 
 export type TypeTaskReducer = {
     [key: string]: TypeTaskItems[]
 }
-let initialState: TypeTaskReducer = {
-}
-const slice = createSlice({
-    name: 'task',
-    initialState,
-    reducers: {
-        removeTaskAC(state, action: PayloadAction<{ taskId: string, todoListId: string }>) {
-            let task = state[action.payload.todoListId].findIndex(task => task.id === action.payload.taskId)
-            state[action.payload.todoListId].splice(task, 1)
-        },
-        addTaskAC(state, action: PayloadAction<{ task: TypeTaskItems }>) {
-            state[action.payload.task.todoListId].push(action.payload.task)
-        },
-        changeTaskAC(state, action: PayloadAction<{ task: TypeTaskItems }>) {
-            state[action.payload.task.todoListId].map(task => {
-                if (task.id === action.payload.task.id) {
-                    task.title = action.payload.task.title
-                    task.status = action.payload.task.status
-                }
-                return task;
-            })
-        },
-        changeTaskDisabledAC(state, action: PayloadAction<{ taskId: string, todoListId: string, disabled: boolean }>) {
-            state[action.payload.todoListId].map(task => {
-                if (task.id === action.payload.taskId) {
-                    task.disabledStatus = action.payload.disabled
-                }
-                return task;
-            })
-        },
-        getTasksAC(state, action: PayloadAction<{ todoListId: string, tasks: Array<TypeTaskItems> }>) {
-            state[action.payload.todoListId] = action.payload.tasks
+let initialState: TypeTaskReducer = {}
+export const getTaskTC = createAsyncThunk('task/getTask', async (todoListId: string, thunkAPI) => {
+    thunkAPI.dispatch(setStatusAC({status: 'loading'}))
+    let result = await GetApi.getTasks(todoListId)
+    try {
+        if (!result.data.error) {
+            thunkAPI.dispatch(setStatusAC({status: 'succeeded'}))
+            return {todoListId, tasks: result.data.items}
+
+        } else {
+            return thunkAPI.rejectWithValue({error: 'Some Error'})
 
         }
 
-    },
-    extraReducers: (builder) => {
-        builder
-            .addCase(AddTodolistAC, (state, action) => {
-                state[action.payload.todolist.id] = [];
-            })
-        builder.addCase(RemoveTodolistAC, (state, action) => {
-            delete state[action.payload.todolistId]
-        })
+    } catch (e) {
+        thunkAPI.dispatch(setStatusAC({status: 'error'}))
+        thunkAPI.dispatch(setErrorAC({error: 'Some Error'}))
+        return thunkAPI.rejectWithValue({error: 'Some Error'})
 
-        builder.addCase(setTodolist, (state, action) => {
-            action.payload.todolists.forEach(td => {
-                state[td.id]=[]
+    }
+})
+export const addTaskTC = createAsyncThunk('task/AddTask', async (param: { todoListId: string, title: string }, thunkAPI) => {
+    try {
+        thunkAPI.dispatch(setStatusAC({status: 'loading'}))
+        let task = await GetApi.createTask(param.todoListId, param.title)
+        if (task.data.resultCode === 0) {
+            thunkAPI.dispatch(setStatusAC({status: 'succeeded'}))
+            return {task: task.data.data.item}
 
-            })
-
-
-        })
-    }})
-
-
-export const taskReducer = slice.reducer;
-export const {removeTaskAC, addTaskAC, changeTaskAC, changeTaskDisabledAC, getTasksAC} = slice.actions;
-
-
-export const getTaskTC = (todoListId: string) =>
-
-    async (dispatch: Dispatch) => {
-        debugger
-        dispatch(setStatusAC({status: 'loading'}))
-        let result = await GetApi.getTasks(todoListId)
-        try {
-            if (!result.data.error) {
-                dispatch(getTasksAC({todoListId, tasks: result.data.items}))
-                debugger
-                dispatch(setStatusAC({status: 'succeeded'}))
-            } else {
-                debugger
-                throw new Error("Some Error")
-            }
-
-        } catch (e) {
-            debugger
-            dispatch(setStatusAC({status: 'error'}))
-            dispatch(setErrorAC(e))
+        } else {
+            thunkAPI.dispatch(setStatusAC({status: 'error'}))
+            return thunkAPI.rejectWithValue(task.data.messages[0])
 
         }
-
+    } catch (e) {
+        thunkAPI.dispatch(setErrorAC(e.toString()))
+        thunkAPI.dispatch(setStatusAC({status: 'error'}))
+        return thunkAPI.rejectWithValue(e)
 
     }
+})
+export const removeTaskTC = createAsyncThunk('task/removeTask', async (param: { todoListId: string, taskId: string }, thunkAPI) => {
+    thunkAPI.dispatch(setStatusAC({status: 'loading'}))
+    thunkAPI.dispatch(changeTaskDisabledAC({taskId: param.taskId, todoListId: param.todoListId, disabled: true}))
+    let result = await GetApi.deleteTask(param.todoListId, param.taskId)
+    try {
+        if (result.data.resultCode === 0) {
+            thunkAPI.dispatch(setStatusAC({status: 'succeeded'}))
+            thunkAPI.dispatch(changeTaskDisabledAC({
+                taskId: param.taskId,
+                todoListId: param.todoListId,
+                disabled: false
+            }))
+            return {taskId: param.taskId, todoListId: param.todoListId}
 
-
-export const addTaskTC = (todoListId: string, title: string): ThunkAction<void,
-    AppRootStateType, unknown, ActionType> =>
-    async (dispatch: Dispatch) => {
-        try {
-            dispatch(setStatusAC({status: 'loading'}))
-            let task = await GetApi.createTask(todoListId, title)
-            if (task.data.resultCode === 0) {
-                dispatch(addTaskAC({task: task.data.data.item}))
-                dispatch(setStatusAC({status: 'succeeded'}))
-            } else {
-                dispatch(setStatusAC({status: 'error'}))
-                throw new Error(task.data.messages[0])
-
-            }
-        } catch (e) {
-            dispatch(setErrorAC(e.toString()))
-            dispatch(setStatusAC({status: 'error'}))
-
+        } else {
+            thunkAPI.dispatch(setStatusAC({status: 'error'}))
+            thunkAPI.dispatch(changeTaskDisabledAC({
+                taskId: param.taskId,
+                todoListId: param.todoListId,
+                disabled: false
+            }))
+            return thunkAPI.rejectWithValue(result.data.messages[0])
         }
 
+    } catch (e) {
+        thunkAPI.dispatch(setErrorAC(e.toString()))
+        thunkAPI.dispatch(setStatusAC({status: 'error'}))
+        return thunkAPI.rejectWithValue(e)
 
     }
+})
 
-export const removeTaskTC = (todoListId: string, taskId: string): ThunkAction<void, AppRootStateType,
-    unknown, ActionType> =>
-    (dispatch: Dispatch) => {
-        dispatch(setStatusAC({status: 'loading'}))
-        dispatch(changeTaskDisabledAC({taskId, todoListId, disabled: true}))
-        GetApi.deleteTask(todoListId, taskId)
-            .then(res => {
-                if (res.data.resultCode === 0) {
-                    dispatch(removeTaskAC({taskId, todoListId}))
-                    dispatch(setStatusAC({status: 'succeeded'}))
-                    dispatch(changeTaskDisabledAC({taskId, todoListId, disabled: false}))
-
-                } else {
-                    dispatch(setStatusAC({status: 'error'}))
-                    dispatch(changeTaskDisabledAC({taskId, todoListId, disabled: false}))
-                    throw new Error(res.data.messages[0])
-                }
-            })
-            .catch(e => {
-                dispatch(setErrorAC(e.toString()))
-                dispatch(setStatusAC({status: 'error'}))
-
-            })
-    }
-
-export const updateTaskTitleTC = (todoListId: string, taskId: string, title: string):
-    ThunkAction<void,
-        AppRootStateType, unknown, ActionType> =>
-
-    async (dispatch: Dispatch, getState) => {
-        const tasks = getState().tasks
-        const task = tasks[todoListId].find(ts => ts.id === taskId)
+export const updateTaskTitleTC = createAsyncThunk('task/updateTaskTitle',
+    async (param: { todoListId: string, taskId: string, title: string }, thunkAPI) => {
+        const state = thunkAPI.getState() as AppRootStateType
+        const tasks = state.tasks
+        const task = tasks[param.todoListId].find(ts => ts.id === param.taskId)
         if (task) {
+
             const model: PropertiesType = {
-                title: title,
+                title: param.title,
                 description: task.description,
                 completed: task.completed,
                 status: task.status,
@@ -163,67 +98,136 @@ export const updateTaskTitleTC = (todoListId: string, taskId: string, title: str
 
             }
             try {
-                dispatch(setStatusAC({status: 'loading'}))
+                thunkAPI.dispatch(setStatusAC({status: 'loading'}))
                 let result = await GetApi.updateTask(task.todoListId, task.id, model)
                 if (result.data.resultCode === 0) {
-                    dispatch(changeTaskAC({task: result.data.data.item}))
-                    dispatch(setStatusAC({status: 'succeeded'}))
+                    thunkAPI.dispatch(setStatusAC({status: 'succeeded'}))
+                    return {task: result.data.data.item}
+
                 } else {
-                    dispatch(setStatusAC({status: 'error'}))
-                    throw new Error(result.data.messages[0])
+                    thunkAPI.dispatch(setStatusAC({status: 'error'}))
+                    return thunkAPI.rejectWithValue(result.data.messages[0])
                 }
             } catch (e) {
-                dispatch(setErrorAC(e.toString()))
-                dispatch(setStatusAC({status: 'error'}))
+                thunkAPI.dispatch(setErrorAC(e.toString()))
+                thunkAPI.dispatch(setStatusAC({status: 'error'}))
+                return thunkAPI.rejectWithValue(e)
 
             }
         }
+        return thunkAPI.rejectWithValue("Some Error")
+
+    })
+export const updateTaskStatusTC = createAsyncThunk('task/updateTaskStatus',
+    async (param: { todoListId: string, taskId: string, status: TypeStatusTask }, thunkAPI) => {
+        const state = thunkAPI.getState() as AppRootStateType
+        const tasks = state.tasks
+        const task = tasks[param.todoListId].find(ts => ts.id === param.taskId)
+
+        if (task) {
+            const model: PropertiesType = {
+                title: task.title,
+                description: task.description,
+                completed: task.completed,
+                status: param.status,
+                priority: task.priority,
+                startDate: task.startDate,
+                deadline: task.deadline,
+            }
+            try {
+                thunkAPI.dispatch(setStatusAC({status: 'loading'}))
+                let result = await GetApi.updateTask(task.todoListId, task.id, model)
+                if (result.data.resultCode === 0) {
+
+                    thunkAPI.dispatch(setStatusAC({status: 'succeeded'}))
+                    return {task: result.data.data.item}
+                } else {
+                    thunkAPI.dispatch(setStatusAC({status: 'error'}))
+                    return thunkAPI.rejectWithValue(result.data.messages[0])
+                }
+            } catch (e) {
+                thunkAPI.dispatch(setErrorAC(e.toString()))
+                thunkAPI.dispatch(setStatusAC({status: 'error'}))
+                return thunkAPI.rejectWithValue(e)
+
+            }
+
+        }
+        return thunkAPI.rejectWithValue('Some Error')
+
+    })
+
+const slice = createSlice({
+    name: 'task',
+    initialState,
+    reducers: {
+        changeTaskDisabledAC(state, action: PayloadAction<{ taskId: string, todoListId: string, disabled: boolean }>) {
+            state[action.payload.todoListId].map(task => {
+                if (task.id === action.payload.taskId) {
+                    task.disabledStatus = action.payload.disabled
+                }
+                return task;
+            })
+        },
+
+
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(addTodolistTC.fulfilled, (state, action) => {
+                state[action.payload.todolist.id] = [];
+            })
+        builder.addCase(removeTodolistTC.fulfilled, (state, action) => {
+            delete state[action.payload.todolistId]
+        })
+
+        builder.addCase(getTodolistsTC.fulfilled, (state, action) => {
+            action.payload.todolists.forEach(td => {
+                state[td.id] = []
+
+            })
+        })
+
+        builder.addCase(getTaskTC.fulfilled, (state, action) => {
+            state[action.payload.todoListId] = action.payload.tasks
+        })
+        builder.addCase(addTaskTC.fulfilled, (state, action) => {
+            state[action.payload.task.todoListId].push(action.payload.task)
+        })
+        builder.addCase(removeTaskTC.fulfilled, (state, action) => {
+            let task = state[action.payload.todoListId].findIndex(task => task.id === action.payload.taskId)
+            state[action.payload.todoListId].splice(task, 1)
+        })
+        builder.addCase(updateTaskTitleTC.fulfilled, (state, action) => {
+            state[action.payload.task.todoListId].map(task => {
+                if (task.id === action.payload.task.id) {
+                    task.title = action.payload.task.title
+                    task.status = action.payload.task.status
+                }
+                return task;
+            })
+        })
+        builder.addCase(updateTaskStatusTC.fulfilled, (state, action) => {
+            state[action.payload.task.todoListId].map(task => {
+                if (task.id === action.payload.task.id) {
+                    task.title = action.payload.task.title
+                    task.status = action.payload.task.status
+                }
+                return task;
+            })
+        })
+
 
     }
-export const updateTaskStatusTC =
-    (todoListId: string, taskId: string, status: TypeStatusTask):
-        ThunkAction<void, AppRootStateType, unknown, ActionType> =>
-        async (dispatch: Dispatch, getState) => {
-            const tasks = getState().tasks
-            const task = tasks[todoListId].find(ts => ts.id === taskId)
+})
 
-            if (task) {
-                const model: PropertiesType = {
-                    title: task.title,
-                    description: task.description,
-                    completed: task.completed,
-                    status: status,
-                    priority: task.priority,
-                    startDate: task.startDate,
-                    deadline: task.deadline,
-                }
-                try {
-                    dispatch(setStatusAC({status: 'loading'}))
-                    let result = await GetApi.updateTask(task.todoListId, task.id, model)
-                    if (result.data.resultCode === 0) {
-                        dispatch(changeTaskAC({task: result.data.data.item}))
-                        dispatch(setStatusAC({status: 'succeeded'}))
-                    } else {
-                        dispatch(setStatusAC({status: 'error'}))
-                        throw new Error(result.data.messages[0])
-                    }
-                } catch (e) {
-                    dispatch(setErrorAC(e.toString()))
-                    dispatch(setStatusAC({status: 'error'}))
 
-                }
-
-            }
-        }
+export const taskReducer = slice.reducer;
+export const {changeTaskDisabledAC} = slice.actions;
 
 
 export type TypeTaskDisabledButton = ReturnType<typeof changeTaskDisabledAC>
-export type ActionType =
-    | ReturnType<typeof removeTaskAC>
-    | ReturnType<typeof addTaskAC>
-    | ReturnType<typeof changeTaskAC>
-    | ReturnType<typeof getTasksAC>
-    | TypeTaskDisabledButton
+export type ActionType =TypeTaskDisabledButton
 
 
 //
